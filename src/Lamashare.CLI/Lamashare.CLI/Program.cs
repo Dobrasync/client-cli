@@ -5,9 +5,11 @@ using Lamashare.CLI.Db;
 using Lamashare.CLI.Services.Command;
 using Lamashare.CLI.Storage.Arguments;
 using Lamashare.CLI.Storage.Service;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Core;
+using Constants = Lamashare.CLI.Const.Constants;
 
 #region CLI Params
 var result = Parser.Default.ParseArguments<Options>(args);
@@ -18,7 +20,10 @@ if (result.Errors.Any()) return 1;
 #region Services
 var services = new ServiceCollection();
 #region Context
-services.AddDbContext<LamashareContext>();
+services.AddDbContext<LamashareContext>(x =>
+{
+    x.UseSqlite($"Data Source={Constants.AppSqliteFilePath}");
+});
 #endregion
 #region Logging
 services.AddSerilog(x =>
