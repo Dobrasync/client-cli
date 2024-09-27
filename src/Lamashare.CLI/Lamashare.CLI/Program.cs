@@ -1,17 +1,9 @@
 ﻿#region Bootstrap
 
-using CommandLine;
-using Lamashare.CLI.Db;
-using Lamashare.CLI.Services.Command;
-using Lamashare.CLI.Storage.Arguments;
-using Lamashare.CLI.Storage.Service;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Core;
-using Constants = Lamashare.CLI.Const.Constants;
-
 #region CLI Params
+
+using Lamashare.CLI.ApiGen.Mainline;
+
 var result = Parser.Default.ParseArguments<Options>(args);
 
 if (result.Errors.Any()) return 1;
@@ -38,9 +30,12 @@ services.AddScoped<ISyncService, SyncService>();
 #region CommandService
 services.AddScoped<ICommandService, CommandService>();
 #endregion
+#region OAPI
+services.AddHttpClient<IApiClient, ApiClient>(_ => new ApiClient("http://localhost:5127", new HttpClient()));
+#endregion
 #endregion
 
 var servicesProvider = services.BuildServiceProvider();
 var commandService = servicesProvider.GetRequiredService<ICommandService>();
-commandService.Consume(result);
-return 0;
+int exitCode = await commandService.Consume(args);
+return exitCode;

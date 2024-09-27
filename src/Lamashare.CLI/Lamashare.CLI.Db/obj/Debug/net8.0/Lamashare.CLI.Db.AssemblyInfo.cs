@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Lamashare.CLI.Db")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0796e579e931c5a5205a86355edf1fb08eafc7de")]
 [assembly: System.Reflection.AssemblyProductAttribute("Lamashare.CLI.Db")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Lamashare.CLI.Db")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

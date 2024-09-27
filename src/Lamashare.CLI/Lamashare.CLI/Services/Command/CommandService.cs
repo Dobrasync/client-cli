@@ -1,25 +1,20 @@
-using CommandLine;
-using Lamashare.CLI.Services.Command.Commands;
-using Lamashare.CLI.Storage.Service;
-
 namespace Lamashare.CLI.Services.Command;
 
-public class CommandService(ILoggerService logger) : ICommandService
+public class CommandService(IServiceProvider serviceProvider) : ICommandService
 {
     List<ICommand> commands = new List<ICommand>()
     {
-        new CloneCommand(),
-        new RemoveCommand(),
-        new LoginCommand(),
-        new LogoutCommand(),
+        ActivatorUtilities.CreateInstance<LoginCommand>(serviceProvider),
+        ActivatorUtilities.CreateInstance<CloneCommand>(serviceProvider),
     };
-    public void Consume(ParserResult<Lamashare.CLI.Storage.Arguments.Options> options)
+    public async Task<int> Consume(string[] args)
     {
-        ICommand? command = commands.FirstOrDefault(x => x.GetName().Equals(options.Value.Action, StringComparison.OrdinalIgnoreCase));
-        if (command == null)
-        {
-            logger.LogFatal($"Invalid command. Available commands are: {string.Join(", ", commands.Select(x => x.GetName()).ToArray())}");
-            Environment.Exit(1);
-        }
+        if (args.Length == 0) return 1;
+        ICommand? commandMatch = commands.FirstOrDefault(x => x.GetName().Equals(args[0], StringComparison.OrdinalIgnoreCase));
+        if (commandMatch == null) return 1;
+        
+        int exitCode = await commandMatch.Execute(args);
+        return exitCode;
     }
+    
 }

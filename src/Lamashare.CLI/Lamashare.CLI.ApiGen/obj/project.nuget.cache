@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "YaXpwu6vCdM=",
+  "dgSpecHash": "YmSDdDzJmrI=",
   "success": true,
   "projectFilePath": "/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.ApiGen/Lamashare.CLI.ApiGen.csproj",
   "expectedPackageFiles": [
@@ -17,6 +17,8 @@
     "/home/taxset/.nuget/packages/microsoft.extensions.options/8.0.0/microsoft.extensions.options.8.0.0.nupkg.sha512",
     "/home/taxset/.nuget/packages/microsoft.extensions.options.configurationextensions/8.0.0/microsoft.extensions.options.configurationextensions.8.0.0.nupkg.sha512",
     "/home/taxset/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "/home/taxset/.nuget/packages/newtonsoft.json/13.0.3/newtonsoft.json.13.0.3.nupkg.sha512",
+    "/home/taxset/.nuget/packages/nswag.msbuild/14.1.0/nswag.msbuild.14.1.0.nupkg.sha512",
     "/home/taxset/.nuget/packages/system.diagnostics.diagnosticsource/8.0.0/system.diagnostics.diagnosticsource.8.0.0.nupkg.sha512"
   ],
   "logs": []

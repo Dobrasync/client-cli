@@ -1,6 +1,4 @@
-using CommandLine;
-
-namespace Lamashare.CLI.Storage.Arguments;
+namespace Lamashare.CLI.Arguments;
 
 public class Options
 {

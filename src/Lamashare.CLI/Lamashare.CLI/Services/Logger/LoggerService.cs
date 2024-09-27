@@ -1,9 +1,6 @@
-using Serilog;
-using Serilog.Core;
+namespace Lamashare.CLI.Services.Logger;
 
-namespace Lamashare.CLI.Storage.Service;
-
-public class LoggerService(Logger logger) : ILoggerService
+public class LoggerService(ILogger logger) : ILoggerService
 {
     public void LogDebug(string msg)
     {

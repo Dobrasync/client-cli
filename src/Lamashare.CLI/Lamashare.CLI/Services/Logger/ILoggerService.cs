@@ -1,4 +1,4 @@
-namespace Lamashare.CLI.Storage.Service;
+namespace Lamashare.CLI.Services.Logger;
 
 public interface ILoggerService
 {
