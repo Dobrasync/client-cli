@@ -2,11 +2,13 @@ namespace Lamashare.CLI.Services.Sync;
 
 public interface ISyncService
 {
-    public void Login();
+    public Task<int> Login();
 
-    public void Logout();
+    public Task<int> Logout();
 
-    public void CloneLibrary(Guid libraryId);
+    public Task<int> CloneLibrary(Guid libraryId, string localLibraryPath);
 
-    public void RemoveLibrary(Guid libraryId);
+    public Task<int> RemoveLibrary(Guid libraryId, bool deleteDirectory);
+
+    public Task<int> SyncLibrary(Guid localLibId);
 }

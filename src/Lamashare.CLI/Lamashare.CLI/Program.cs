@@ -1,14 +1,18 @@
-﻿#region Bootstrap
+﻿using Lamashare.CLI.ApiGen.Mainline;
+using Lamashare.CLI.Services.SystemSetting;
+using LamashareApi.Database.Repos;
+
+
+#region Bootstrap
 
 #region CLI Params
 
-using Lamashare.CLI.ApiGen.Mainline;
-
-var result = Parser.Default.ParseArguments<Options>(args);
-
+var parser = new Parser(x => x.IgnoreUnknownArguments = true);
+var result = parser.ParseArguments<Options>(args);
 if (result.Errors.Any()) return 1;
 #endregion
 #endregion
+
 #region Services
 var services = new ServiceCollection();
 #region Context
@@ -16,11 +20,25 @@ services.AddDbContext<LamashareContext>(x =>
 {
     x.UseSqlite($"Data Source={Constants.AppSqliteFilePath}");
 });
+services.AddScoped<IRepoWrapper, RepoWrapper>();
+#endregion
+#region System settings
+services.AddScoped<ISystemSettingService, SystemSettingService>();
 #endregion
 #region Logging
 services.AddSerilog(x =>
 {
     x.WriteTo.Console();
+    if (result.Value.LogDebug)
+    {
+        x.MinimumLevel.Debug();
+        x.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Debug);
+    }
+    else
+    {
+        x.MinimumLevel.Information();
+        x.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Error);
+    }
 });
 services.AddScoped<ILoggerService, LoggerService>();
 #endregion
@@ -35,7 +53,17 @@ services.AddHttpClient<IApiClient, ApiClient>(_ => new ApiClient("http://localho
 #endregion
 #endregion
 
+#region Build services
 var servicesProvider = services.BuildServiceProvider();
+#endregion
+#region DB Migrations
+using(var scope = servicesProvider.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<LamashareContext>();
+    dbContext.Database.EnsureCreated();
+}
+#endregion
+
 var commandService = servicesProvider.GetRequiredService<ICommandService>();
 int exitCode = await commandService.Consume(args);
 return exitCode;

@@ -13,3 +13,6 @@
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/obj/Debug/net8.0/Lamashare.CLI.Db.genruntimeconfig.cache
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/obj/Debug/net8.0/ref/Lamashare.CLI.Db.dll
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/obj/Debug/net8.0/Lamashare.CLI.Db.sourcelink.json
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/bin/Debug/net8.0/Lamashare.CLI.Shared.dll
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/bin/Debug/net8.0/Lamashare.CLI.Shared.pdb
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/obj/Debug/net8.0/Lamashar.678440B1.Up2Date

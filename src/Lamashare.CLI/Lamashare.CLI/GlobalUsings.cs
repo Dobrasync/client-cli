@@ -10,7 +10,6 @@ global using Lamashare.CLI.Services.Command.Commands.Clone;
 global using Lamashare.CLI.Services.Command.Commands.Login;
 global using Lamashare.CLI.Services.Logger;
 global using Lamashare.CLI.Services.Sync;
-global using Lamashare.CLI.Util;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;

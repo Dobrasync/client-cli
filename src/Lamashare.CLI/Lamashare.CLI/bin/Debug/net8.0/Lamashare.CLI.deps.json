@@ -11,6 +11,7 @@
           "CommandLineParser": "2.9.1",
           "Lamashare.CLI.ApiGen": "1.0.0",
           "Lamashare.CLI.Db": "1.0.0",
+          "LamashareCore": "1.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.1",
           "Serilog": "4.0.1",
           "Serilog.Extensions.Hosting": "8.0.0",
@@ -522,11 +523,22 @@
       },
       "Lamashare.CLI.Db/1.0.0": {
         "dependencies": {
+          "Lamashare.CLI.Shared": "1.0.0",
           "Microsoft.EntityFrameworkCore": "8.0.8",
           "Microsoft.EntityFrameworkCore.Sqlite": "8.0.8"
         },
         "runtime": {
           "Lamashare.CLI.Db.dll": {}
+        }
+      },
+      "Lamashare.CLI.Shared/1.0.0": {
+        "runtime": {
+          "Lamashare.CLI.Shared.dll": {}
+        }
+      },
+      "LamashareCore/1.0.0": {
+        "runtime": {
+          "LamashareCore.dll": {}
         }
       }
     }
@@ -816,6 +828,16 @@
       "sha512": ""
     },
     "Lamashare.CLI.Db/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Lamashare.CLI.Shared/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "LamashareCore/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

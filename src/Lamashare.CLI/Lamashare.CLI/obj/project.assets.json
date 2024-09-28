@@ -779,6 +779,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
+          "Lamashare.CLI.Shared": "1.0.0",
           "Microsoft.EntityFrameworkCore": "8.0.8",
           "Microsoft.EntityFrameworkCore.Sqlite": "8.0.8"
         },
@@ -787,6 +788,26 @@
         },
         "runtime": {
           "bin/placeholder/Lamashare.CLI.Db.dll": {}
+        }
+      },
+      "Lamashare.CLI.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Lamashare.CLI.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Lamashare.CLI.Shared.dll": {}
+        }
+      },
+      "LamashareCore/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/LamashareCore.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LamashareCore.dll": {}
         }
       }
     }
@@ -1918,6 +1939,16 @@
       "type": "project",
       "path": "../Lamashare.CLI.Db/Lamashare.CLI.Db.csproj",
       "msbuildProject": "../Lamashare.CLI.Db/Lamashare.CLI.Db.csproj"
+    },
+    "Lamashare.CLI.Shared/1.0.0": {
+      "type": "project",
+      "path": "../Lamashare.CLI.Shared/Lamashare.CLI.Shared.csproj",
+      "msbuildProject": "../Lamashare.CLI.Shared/Lamashare.CLI.Shared.csproj"
+    },
+    "LamashareCore/1.0.0": {
+      "type": "project",
+      "path": "../../../../lamashare-core/src/LamashareCore/LamashareCore/LamashareCore.csproj",
+      "msbuildProject": "../../../../lamashare-core/src/LamashareCore/LamashareCore/LamashareCore.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -1925,6 +1956,7 @@
       "CommandLineParser >= 2.9.1",
       "Lamashare.CLI.ApiGen >= 1.0.0",
       "Lamashare.CLI.Db >= 1.0.0",
+      "LamashareCore >= 1.0.0",
       "Microsoft.Extensions.DependencyInjection.Abstractions >= 8.0.1",
       "Serilog >= 4.0.1",
       "Serilog.Extensions.Hosting >= 8.0.0",
@@ -1961,6 +1993,9 @@
             },
             "/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/Lamashare.CLI.Db.csproj": {
               "projectPath": "/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/Lamashare.CLI.Db.csproj"
+            },
+            "/home/taxset/Git Repos/OminousLama/lamashare-core/src/LamashareCore/LamashareCore/LamashareCore.csproj": {
+              "projectPath": "/home/taxset/Git Repos/OminousLama/lamashare-core/src/LamashareCore/LamashareCore/LamashareCore.csproj"
             }
           }
         }

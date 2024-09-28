@@ -1015,6 +1015,16 @@
         "build": {
           "buildTransitive/netcoreapp3.1/_._": {}
         }
+      },
+      "Lamashare.CLI.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Lamashare.CLI.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Lamashare.CLI.Shared.dll": {}
+        }
       }
     }
   },
@@ -2525,10 +2535,16 @@
         "system.threading.channels.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "Lamashare.CLI.Shared/1.0.0": {
+      "type": "project",
+      "path": "../Lamashare.CLI.Shared/Lamashare.CLI.Shared.csproj",
+      "msbuildProject": "../Lamashare.CLI.Shared/Lamashare.CLI.Shared.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Lamashare.CLI.Shared >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 8.0.8",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.8",
       "Microsoft.EntityFrameworkCore.Sqlite >= 8.0.8"
@@ -2558,7 +2574,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/Lamashare.CLI.Shared.csproj": {
+              "projectPath": "/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/Lamashare.CLI.Shared.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

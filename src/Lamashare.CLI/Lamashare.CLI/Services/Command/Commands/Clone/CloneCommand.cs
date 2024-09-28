@@ -1,8 +1,10 @@
 using Lamashare.CLI.ApiGen.Mainline;
+using Lamashare.CLI.Db.Entities;
+using LamashareApi.Database.Repos;
 
 namespace Lamashare.CLI.Services.Command.Commands.Clone;
 
-public class CloneCommand(ILoggerService logger, IApiClient apiClient) : ICommand
+public class CloneCommand(ILoggerService logger, IApiClient apiClient, ISyncService syncService) : ICommand
 {
     public string GetName()
     {
@@ -22,9 +24,9 @@ public class CloneCommand(ILoggerService logger, IApiClient apiClient) : IComman
     private async Task<int> Clone(ParserResult<CloneOptions> results)
     {
         Guid libraryId = results.Value.LibraryId;
-        logger.LogDebug($"Attempting to clone {libraryId}...");
-
-        var t = await apiClient.GetLibraryByIdAsync(libraryId);
+        string localLibraryPath = results.Value.LocalLibraryPath;
+        
+        await syncService.CloneLibrary(libraryId, localLibraryPath);
         
         return 0;
     }

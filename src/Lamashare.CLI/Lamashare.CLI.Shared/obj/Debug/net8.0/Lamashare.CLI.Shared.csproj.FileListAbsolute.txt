@@ -1,0 +1,12 @@
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/bin/Debug/net8.0/Lamashare.CLI.Shared.deps.json
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/bin/Debug/net8.0/Lamashare.CLI.Shared.dll
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/bin/Debug/net8.0/Lamashare.CLI.Shared.pdb
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.GeneratedMSBuildEditorConfig.editorconfig
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.AssemblyInfoInputs.cache
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.AssemblyInfo.cs
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.csproj.CoreCompileInputs.cache
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.sourcelink.json
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.dll
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/refint/Lamashare.CLI.Shared.dll
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.pdb
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/ref/Lamashare.CLI.Shared.dll

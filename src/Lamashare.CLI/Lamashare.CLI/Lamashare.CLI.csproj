@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\..\lamashare-core\src\LamashareCore\LamashareCore\LamashareCore.csproj" />
       <ProjectReference Include="..\Lamashare.CLI.ApiGen\Lamashare.CLI.ApiGen.csproj" />
       <ProjectReference Include="..\Lamashare.CLI.Db\Lamashare.CLI.Db.csproj" />
     </ItemGroup>
