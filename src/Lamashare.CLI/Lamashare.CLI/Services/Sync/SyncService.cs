@@ -136,9 +136,28 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         return ExitCodes.Success;
     }
     #endregion
+    
+    #region Sync all
+    public async Task<int> SyncAllLibraries()
+    {
+        var libs= await repoWrap.LibraryRepo.QueryAll().ToListAsync();
+        if (libs.Count == 0)
+        {
+            logger.LogInfo("No libraries to sync.");
+            return ExitCodes.Success;
+        }
+        
+        foreach (var lib in libs)
+        {
+            await SyncLibrary(lib.Id);
+        }
+        return ExitCodes.Success;
+    }
+    #endregion
     #region Sync
     public async Task<int> SyncLibrary(Guid localLibId)
     {
+        logger.LogInfo($"Invoking sync for {localLibId}...");
         #region load
         var lib = await repoWrap.LibraryRepo.GetByIdAsync(localLibId);
         if (lib == null)
@@ -148,8 +167,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         }
         #endregion
         
-        #region Get diff from remote
         #region make file list
+        logger.LogInfo("Generating local library file tree...");
         var localFiles = Directory.GetFiles(lib.LocalPath, "*.*", SearchOption.AllDirectories);
         List<FileInfoDto> lfi = new();
         foreach (string syspath in localFiles)
@@ -168,6 +187,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #endregion
         
         #region Get diff list
+        logger.LogInfo("Getting diff from remote...");
         var diff = await apiClient.GetDiffAsync(new()
         {
             LibraryId = lib.RemoteId,
@@ -176,10 +196,23 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #endregion
         
         #region Pull
+        logger.LogInfo("Pulling remote files...");
         foreach (var file in diff.RequiredByLocal)
         {
             var assembledBlocks = new List<byte[]>();
             var remoteBlocklist = await apiClient.GetFileBlockListAsync(lib.RemoteId, file);
+            
+            #region Begin transaction
+            var transaction = await apiClient.CreateFileTransactionAsync(new()
+            {
+                LibraryId = localLibId,
+                FileLibraryPath = file,
+                Type = EFileTransactionType.PULL,
+                BlockChecksums = null,
+                TotalChecksum = null,
+            });
+            #endregion
+            
             foreach (var block in remoteBlocklist)
             {
                 BlockDto pulled = await apiClient.PullBlockAsync(block);
@@ -191,8 +224,52 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
             {
                 fileStream.Write(rawBytes, 0, rawBytes.Length);
             }
+            
+            #region Finalize transaction
+            var result = await apiClient.FinishFileTransactionAsync(transaction.TransactionId);
+            #endregion
         }
         #endregion
+        
+        #region Push
+        logger.LogInfo("Pushing local files...");
+        foreach (var file in diff.RequiredByRemote)
+        {
+            List<BlockDto> blocks = new();
+            var assembledBlocks = new List<byte[]>();
+            var remoteBlocklist = await apiClient.GetFileBlockListAsync(lib.RemoteId, file);
+            var localBlocklist = FileUtil.GetFileBlocks(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
+            string totalChecksum = await FileUtil.GetFileTotalChecksumAsync(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
+            
+            #region Begin transaction
+            var transaction = await apiClient.CreateFileTransactionAsync(new()
+            {
+                LibraryId = localLibId,
+                FileLibraryPath = file,
+                Type = EFileTransactionType.PUSH,
+                BlockChecksums = localBlocklist.Select(x => x.Checksum).ToArray(),
+                TotalChecksum = totalChecksum,
+            });
+            #endregion
+            
+            foreach (var block in localBlocklist)
+            {
+                var remoteBlock = remoteBlocklist.FirstOrDefault(x => x == block.Checksum);
+                // If the local block is not present on remote, push it
+                if (remoteBlock == null)
+                {
+                    await apiClient.PushBlockAsync(new BlockDto()
+                    {
+                        Checksum = block.Checksum,
+                        Content = block.Payload
+                    });
+                }
+            }
+            
+            #region finalize transaction
+            await apiClient.FinishFileTransactionAsync(transaction.TransactionId);
+            #endregion
+        }
         #endregion
 
         return 0;

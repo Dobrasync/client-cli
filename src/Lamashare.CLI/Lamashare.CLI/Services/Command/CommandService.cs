@@ -1,18 +1,20 @@
 using Lamashare.CLI.Services.Command.Commands.Configure;
 using Lamashare.CLI.Services.Command.Commands.List;
 using Lamashare.CLI.Services.Command.Commands.Remove;
+using Lamashare.CLI.Services.Command.Commands.Sync;
 
 namespace Lamashare.CLI.Services.Command;
 
 public class CommandService(IServiceProvider serviceProvider, ILoggerService logger) : ICommandService
 {
-    List<ICommand> commands = new List<ICommand>()
+    List<ICommand> commands = new()
     {
         ActivatorUtilities.CreateInstance<LoginCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<CloneCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<RemoveCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ListCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ConfigureCommand>(serviceProvider),
+        ActivatorUtilities.CreateInstance<SyncCommand>(serviceProvider),
     };
     public async Task<int> Consume(string[] args)
     {

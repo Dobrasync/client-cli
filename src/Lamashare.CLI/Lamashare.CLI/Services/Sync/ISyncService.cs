@@ -11,4 +11,5 @@ public interface ISyncService
     public Task<int> RemoveLibrary(Guid libraryId, bool deleteDirectory);
 
     public Task<int> SyncLibrary(Guid localLibId);
+    public Task<int> SyncAllLibraries();
 }
