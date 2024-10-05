@@ -14,7 +14,7 @@ public class CommandService(IServiceProvider serviceProvider, ILoggerService log
         ActivatorUtilities.CreateInstance<RemoveCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ListCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ConfigureCommand>(serviceProvider),
-        ActivatorUtilities.CreateInstance<SyncCommand>(serviceProvider),
+        ActivatorUtilities.CreateInstance<ScanCommand>(serviceProvider),
     };
     public async Task<int> Consume(string[] args)
     {

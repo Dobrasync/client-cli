@@ -1,4 +1,5 @@
 ﻿using Lamashare.CLI.ApiGen.Mainline;
+using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
 using LamashareApi.Database.Repos;
 
@@ -48,6 +49,7 @@ services.AddScoped<ISyncService, SyncService>();
 #region CommandService
 services.AddScoped<ICommandService, CommandService>();
 #endregion
+services.AddScoped<IBlockService, BlockService>();
 #region OAPI
 services.AddHttpClient<IApiClient, ApiClient>(_ => new ApiClient("http://localhost:5127", new HttpClient()));
 #endregion

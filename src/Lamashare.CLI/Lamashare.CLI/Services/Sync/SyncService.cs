@@ -4,15 +4,18 @@ using Lamashare.CLI.ApiGen.Mainline;
 using Lamashare.CLI.Const;
 using Lamashare.CLI.Db.Entities;
 using Lamashare.CLI.Db.Enums;
+using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
 using Lamashare.CLI.Shared.Exceptions;
 using LamashareApi.Database.Repos;
 using LamashareCore;
 using LamashareCore.Util;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Lamashare.CLI.Services.Sync;
 
-public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerService logger, ISystemSettingService settings) : ISyncService
+public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerService logger, ISystemSettingService settings, IBlockService blockService) : ISyncService
 {
     #region Login
     public Task<int> Login()
@@ -157,8 +160,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #region Sync
     public async Task<int> SyncLibrary(Guid localLibId)
     {
+        #region load local library
         logger.LogInfo($"Invoking sync for {localLibId}...");
-        #region load
         var lib = await repoWrap.LibraryRepo.GetByIdAsync(localLibId);
         if (lib == null)
         {
@@ -166,8 +169,134 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
             return ExitCodes.Failure;
         }
         #endregion
+
+        #region Get diff
+        var diff = await Diff(lib.Id);
+        #endregion
+        #region Pull
+        logger.LogInfo("Pulling remote files...");
+        foreach (var file in diff.RequiredByLocal)
+        {
+            await PullFile(lib.Id, file);
+        }
+        #endregion
+        #region Push
+        logger.LogInfo("Pushing local files...");
+        foreach (var file in diff.RequiredByRemote)
+        {
+            await PushFile(lib.Id, file);
+        }
+        #endregion
+
+        return 0;
+    }
+    #endregion
+    #region Pull file
+    public async Task<int> PullFile(Guid localLibId, string fileLocalPath)
+    {
+        #region load file
+        Library lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
+        string file = fileLocalPath;
+        #endregion
         
-        #region make file list
+        #region Transaction - START
+        var transaction = await apiClient.CreateFileTransactionAsync(new()
+        {
+            LibraryId = localLibId,
+            FileLibraryPath = file,
+            Type = EFileTransactionType.PULL,
+        });
+        logger.LogDebug($"Began pull transaction with result: {JsonSerializer.Serialize(transaction)}");
+        #endregion
+        #region Fetch remote file info
+        var remoteFileInfo = await apiClient.GetFileInfoAsync(lib.RemoteId, file);
+        var remoteFileBlocklist = await apiClient.GetFileBlockListAsync(lib.RemoteId, file);
+        #endregion
+        #region Pull blocks required by local
+        // TODO: Build diff, for testing we just full everything for now
+        foreach (var block in remoteFileBlocklist)
+        {
+            BlockDto pulled = await apiClient.PullBlockAsync(block);
+            await blockService.WriteTempBlock(pulled.Checksum, pulled.Content);
+        }
+        #endregion
+        #region Transaction - FINISH
+        var result = await apiClient.FinishFileTransactionAsync(transaction.Id);
+        logger.LogDebug($"Finished pull transaction with result: {JsonSerializer.Serialize(result)}");
+        #endregion
+        #region Restore file from blocks
+        await blockService.RestoreFileFromBlocks(
+            remoteFileBlocklist.ToList(), 
+            FileUtil.FileLibPathToSysPath(lib.LocalPath, remoteFileInfo.FileLibraryPath), 
+            remoteFileInfo.ModifiedOn.DateTime,  
+            remoteFileInfo.CreatedOn.DateTime
+        );
+        #endregion
+
+        return ExitCodes.Success;
+    }
+    #endregion
+    #region Push file
+    public async Task<int> PushFile(Guid localLibId, string fileLocalPath)
+    {
+        #region load
+        var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
+        string file = fileLocalPath;
+        #endregion
+        
+        #region Get local file info and data
+        FileInfo localFileInfo = new FileInfo(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
+        var localFileBlocklist = FileUtil.GetFileBlocks(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
+        string localFileTotalChecksum = await FileUtil.GetFileTotalChecksumAsync(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
+        #endregion
+        #region Begin transaction
+        var transaction = await apiClient.CreateFileTransactionAsync(new()
+        {
+            LibraryId = localLibId,
+            FileLibraryPath = file,
+            Type = EFileTransactionType.PUSH,
+            BlockChecksums = localFileBlocklist.Select(x => x.Checksum).ToArray(),
+            TotalChecksum = localFileTotalChecksum,
+            ModifiedOn = localFileInfo.LastWriteTimeUtc,
+            CreatedOn = localFileInfo.CreationTimeUtc,
+        });
+        logger.LogDebug($"Began transaction with result: {JsonSerializer.Serialize(transaction)}");
+        #endregion
+        #region Push required blocks
+        foreach (var remoteBlock in transaction.RequiredBlocks)
+        {
+            var block = localFileBlocklist.FirstOrDefault(x => x.Checksum == remoteBlock);
+            if (block == null)
+            {
+                throw new ArgumentException("Invalid block");
+            }
+            
+            var pushResult = await apiClient.PushBlockAsync(new BlockPushDto()
+            {
+                Checksum = block.Checksum,
+                Content = block.Payload,
+                TransactionId = transaction.Id,
+                LibraryId = lib.Id,
+                Offset = block.Offset,
+                Size = block.Payload.Length,
+            });
+            logger.LogDebug($"Pushed block '{block.Checksum}'.");
+        }
+        #endregion
+        #region finalize transaction
+        var result = await apiClient.FinishFileTransactionAsync(transaction.Id);
+        logger.LogDebug($"Push of file '${localFileInfo.Name}' finish with result: ${JsonSerializer.Serialize(result)}");
+        #endregion
+
+        return ExitCodes.Success;
+    }
+    #endregion
+    #region Diff
+    public async Task<LibraryDiffDto> Diff(Guid localLibId)
+    {
+        var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
+        
+        #region make local file list
         logger.LogInfo("Generating local library file tree...");
         var localFiles = Directory.GetFiles(lib.LocalPath, "*.*", SearchOption.AllDirectories);
         List<FileInfoDto> lfi = new();
@@ -194,85 +323,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
             FilesOnLocal = lfi
         });
         #endregion
-        
-        #region Pull
-        logger.LogInfo("Pulling remote files...");
-        foreach (var file in diff.RequiredByLocal)
-        {
-            var assembledBlocks = new List<byte[]>();
-            var remoteBlocklist = await apiClient.GetFileBlockListAsync(lib.RemoteId, file);
-            
-            #region Begin transaction
-            var transaction = await apiClient.CreateFileTransactionAsync(new()
-            {
-                LibraryId = localLibId,
-                FileLibraryPath = file,
-                Type = EFileTransactionType.PULL,
-                BlockChecksums = null,
-                TotalChecksum = null,
-            });
-            #endregion
-            
-            foreach (var block in remoteBlocklist)
-            {
-                BlockDto pulled = await apiClient.PullBlockAsync(block);
-                assembledBlocks.Add(pulled.Content);
-            }
-            
-            var rawBytes = assembledBlocks.SelectMany(x => x).ToArray();
-            using (FileStream fileStream = new FileStream(FileUtil.FileLibPathToSysPath(file, lib.LocalPath), FileMode.Create, FileAccess.Write))
-            {
-                fileStream.Write(rawBytes, 0, rawBytes.Length);
-            }
-            
-            #region Finalize transaction
-            var result = await apiClient.FinishFileTransactionAsync(transaction.TransactionId);
-            #endregion
-        }
-        #endregion
-        
-        #region Push
-        logger.LogInfo("Pushing local files...");
-        foreach (var file in diff.RequiredByRemote)
-        {
-            List<BlockDto> blocks = new();
-            var assembledBlocks = new List<byte[]>();
-            var remoteBlocklist = await apiClient.GetFileBlockListAsync(lib.RemoteId, file);
-            var localBlocklist = FileUtil.GetFileBlocks(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
-            string totalChecksum = await FileUtil.GetFileTotalChecksumAsync(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
-            
-            #region Begin transaction
-            var transaction = await apiClient.CreateFileTransactionAsync(new()
-            {
-                LibraryId = localLibId,
-                FileLibraryPath = file,
-                Type = EFileTransactionType.PUSH,
-                BlockChecksums = localBlocklist.Select(x => x.Checksum).ToArray(),
-                TotalChecksum = totalChecksum,
-            });
-            #endregion
-            
-            foreach (var block in localBlocklist)
-            {
-                var remoteBlock = remoteBlocklist.FirstOrDefault(x => x == block.Checksum);
-                // If the local block is not present on remote, push it
-                if (remoteBlock == null)
-                {
-                    await apiClient.PushBlockAsync(new BlockDto()
-                    {
-                        Checksum = block.Checksum,
-                        Content = block.Payload
-                    });
-                }
-            }
-            
-            #region finalize transaction
-            await apiClient.FinishFileTransactionAsync(transaction.TransactionId);
-            #endregion
-        }
-        #endregion
 
-        return 0;
+        return diff;
     }
     #endregion
     

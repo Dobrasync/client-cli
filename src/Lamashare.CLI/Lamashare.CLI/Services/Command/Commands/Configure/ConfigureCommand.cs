@@ -29,6 +29,8 @@ public class ConfigureCommand(ISystemSettingService settings, ILoggerService log
             await settings.SetSettingAsync(ESystemSetting.DEFAULT_LIBRARY_DIRECTORY, result.Value.DefaultDirectory);
         if (!string.IsNullOrEmpty(result.Value.DefaultRemote))
             await settings.SetSettingAsync(ESystemSetting.REMOTE_ADDRESS, result.Value.DefaultRemote);
+        if (!string.IsNullOrEmpty(result.Value.TempBlockDir))
+            await settings.SetSettingAsync(ESystemSetting.TEMP_BLOCK_DIRECTORY, result.Value.TempBlockDir);
 
         return 0;
     }

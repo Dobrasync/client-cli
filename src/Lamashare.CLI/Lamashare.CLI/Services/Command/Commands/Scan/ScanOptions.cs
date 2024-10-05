@@ -1,8 +1,8 @@
 namespace Lamashare.CLI.Services.Command.Commands.Sync;
 
 
-[Verb("sync", HelpText = "Sync a library")]
-public class SyncOptions : BaseCommandOptions
+[Verb("scan", HelpText = "Scan a library for changes")]
+public class ScanOptions : BaseCommandOptions
 {
     [Value(0, MetaName = "Action", Required = true)]
     public string Action { get; set; } = default!;

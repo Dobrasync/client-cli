@@ -40,4 +40,15 @@ public class SystemSettingService(IRepoWrapper repoWrap, ILoggerService logger) 
         
         return set;
     }
+
+    public async Task<string> GetSettingValueThrowsAsync(ESystemSetting key)
+    {
+        var s = await GetSettingThrowsAsync(key);
+        if (s.Value == null)
+        {
+            throw new ArgumentException("Setting has no value.");
+        }
+
+        return s.Value;
+    }
 }

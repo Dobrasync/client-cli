@@ -2,16 +2,16 @@ using Lamashare.CLI.Const;
 
 namespace Lamashare.CLI.Services.Command.Commands.Sync;
 
-public class SyncCommand(ISyncService syncService, ILoggerService logger) : ICommand
+public class ScanCommand(ISyncService syncService, ILoggerService logger) : ICommand
 {
     public string GetName()
     {
-        return "sync";
+        return "scan";
     }
 
     public async Task<int> Execute(string[] args)
     {
-        var result = Parser.Default.ParseArguments<SyncOptions>(args);
+        var result = Parser.Default.ParseArguments<ScanOptions>(args);
         if (result.Errors.Any()) return 1;
 
         if (result.Value.SyncAll)
