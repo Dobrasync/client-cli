@@ -174,20 +174,38 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         var diff = await Diff(lib.Id);
         #endregion
         #region Pull
-        logger.LogInfo("Pulling remote files...");
-        foreach (var file in diff.RequiredByLocal)
+
+        if (diff.RequiredByLocal.Any())
         {
-            await PullFile(lib.Id, file);
+            logger.LogInfo($"Pulling {diff.RequiredByLocal.Count()} out-of-sync files from remote...");
+            foreach (var file in diff.RequiredByLocal)
+            {
+                await PullFile(lib.Id, file);
+            }
         }
+        else
+        {
+            logger.LogInfo("No new or newer files on remote, skipping pull.");
+        }
+
         #endregion
         #region Push
-        logger.LogInfo("Pushing local files...");
-        foreach (var file in diff.RequiredByRemote)
+
+        if (diff.RequiredByRemote.Any())
         {
-            await PushFile(lib.Id, file);
+            logger.LogInfo($"Pushing {diff.RequiredByRemote.Count()} out-of-sync local files to remote...");
+            foreach (var file in diff.RequiredByRemote)
+            {
+                await PushFile(lib.Id, file);
+            }
+        }
+        else
+        {
+            logger.LogInfo("No new or newer files on local, skipping push.");
         }
         #endregion
 
+        logger.LogInfo($"Library {lib.Id} is in sync.");
         return 0;
     }
     #endregion
@@ -202,7 +220,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #region Transaction - START
         var transaction = await apiClient.CreateFileTransactionAsync(new()
         {
-            LibraryId = localLibId,
+            LibraryId = lib.RemoteId,
             FileLibraryPath = file,
             Type = EFileTransactionType.PULL,
         });
@@ -228,8 +246,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         await blockService.RestoreFileFromBlocks(
             remoteFileBlocklist.ToList(), 
             FileUtil.FileLibPathToSysPath(lib.LocalPath, remoteFileInfo.FileLibraryPath), 
-            remoteFileInfo.ModifiedOn.DateTime,  
-            remoteFileInfo.CreatedOn.DateTime
+            remoteFileInfo.DateModified.UtcDateTime,  
+            remoteFileInfo.DateCreated.UtcDateTime
         );
         #endregion
 
@@ -245,20 +263,22 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #endregion
         
         #region Get local file info and data
-        FileInfo localFileInfo = new FileInfo(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
-        var localFileBlocklist = FileUtil.GetFileBlocks(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
-        string localFileTotalChecksum = await FileUtil.GetFileTotalChecksumAsync(FileUtil.FileLibPathToSysPath(file, lib.LocalPath));
+
+        string fileSysPath = FileUtil.FileLibPathToSysPath(lib.LocalPath, file);
+        FileInfo localFileInfo = new FileInfo(fileSysPath);
+        var localFileBlocklist = FileUtil.GetFileBlocks(fileSysPath);
+        string localFileTotalChecksum = await FileUtil.GetFileTotalChecksumAsync(fileSysPath);
         #endregion
         #region Begin transaction
         var transaction = await apiClient.CreateFileTransactionAsync(new()
         {
-            LibraryId = localLibId,
+            LibraryId = lib.RemoteId,
             FileLibraryPath = file,
             Type = EFileTransactionType.PUSH,
             BlockChecksums = localFileBlocklist.Select(x => x.Checksum).ToArray(),
             TotalChecksum = localFileTotalChecksum,
-            ModifiedOn = localFileInfo.LastWriteTimeUtc,
-            CreatedOn = localFileInfo.CreationTimeUtc,
+            DateModified = localFileInfo.LastWriteTimeUtc,
+            DateCreated = localFileInfo.CreationTimeUtc,
         });
         logger.LogDebug($"Began transaction with result: {JsonSerializer.Serialize(transaction)}");
         #endregion
@@ -308,7 +328,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
             lfi.Add(new()
             {
                 LibraryId = localLibId,
-                ModifiedOn = info.LastWriteTimeUtc,
+                DateModified = info.LastWriteTimeUtc,
+                DateCreated = info.CreationTimeUtc,
                 TotalChecksum = await FileUtil.GetFileTotalChecksumAsync(syspath),
                 FileLibraryPath = libpath,
             });
@@ -320,7 +341,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         var diff = await apiClient.GetDiffAsync(new()
         {
             LibraryId = lib.RemoteId,
-            FilesOnLocal = lfi
+            FilesOnLocal = lfi,
         });
         #endregion
 
