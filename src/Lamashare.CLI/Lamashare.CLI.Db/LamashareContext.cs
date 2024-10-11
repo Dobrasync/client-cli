@@ -2,6 +2,7 @@ using Lamashare.CLI.Db.Entities;
 using Lamashare.CLI.Db.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using File = Lamashare.CLI.Db.Entities.File;
 
 namespace Lamashare.CLI.Db;
 
@@ -11,6 +12,7 @@ public class LamashareContext : DbContext
     
     public virtual DbSet<SystemSetting> SystemSettings { get; set; }
     public virtual DbSet<Library> Libraries { get; set; }
+    public virtual DbSet<File> Files { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

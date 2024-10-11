@@ -2,6 +2,7 @@
 using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
 using LamashareApi.Database.Repos;
+using Microsoft.Extensions.Hosting;
 
 
 #region Bootstrap
@@ -12,6 +13,7 @@ var parser = new Parser(x => x.IgnoreUnknownArguments = true);
 var result = parser.ParseArguments<Options>(args);
 if (result.Errors.Any()) return 1;
 #endregion
+
 #endregion
 
 #region Services

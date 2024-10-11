@@ -12,4 +12,6 @@ public class Library : BaseEntity
 
     [Required]
     public Guid RemoteId { get; set; }
+
+    public List<File> Files { get; set; } = new();
 }

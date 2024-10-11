@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 using Lamashare.CLI.ApiGen.Mainline;
@@ -11,6 +12,7 @@ using LamashareApi.Database.Repos;
 using LamashareCore;
 using LamashareCore.Util;
 using Newtonsoft.Json;
+using File = Lamashare.CLI.Db.Entities.File;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Lamashare.CLI.Services.Sync;
@@ -171,11 +173,25 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #endregion
 
         #region Get diff
+        List<File> deletedFiles = new();
         var diff = await Diff(lib.Id);
+        
+        #region Remove deleted files from diff
+        foreach (var requiredByLocal in diff.RequiredByLocal)
+        {
+            File? dbFile = repoWrap.FileRepo.QueryAll().FirstOrDefault(x => x.Library == lib && x.FileLibraryPath == requiredByLocal);
+            if (dbFile == null) continue;
+            
+            // If the file exists in DB but not on file system, we assume it's been deleted.
+            deletedFiles.Add(dbFile);
+        }
+        #endregion
         #endregion
         #region Pull
-
-        if (diff.RequiredByLocal.Any())
+        List<string> actuallyRequiredByLocal = diff.RequiredByLocal
+            .Where(x => deletedFiles.All(y => y.FileLibraryPath != x))
+            .ToList();
+        if (actuallyRequiredByLocal.Any())
         {
             logger.LogInfo($"Pulling {diff.RequiredByLocal.Count()} out-of-sync files from remote...");
             foreach (var file in diff.RequiredByLocal)
@@ -187,7 +203,6 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         {
             logger.LogInfo("No new or newer files on remote, skipping pull.");
         }
-
         #endregion
         #region Push
 
@@ -204,7 +219,21 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
             logger.LogInfo("No new or newer files on local, skipping push.");
         }
         #endregion
+        #region Delete
+        if (deletedFiles.Any())
+        {
+            logger.LogInfo($"Detected {deletedFiles.Count()} deleted files, removing them from remote...");
+            foreach (var fileToDelete in deletedFiles)
+            {
+                await DeleteFile(lib.Id, fileToDelete.FileLibraryPath);
+            }
+        }
+        else
+        {
+            logger.LogInfo("No file deletions found, skipping deletion on remote.");
+        }
 
+        #endregion
         logger.LogInfo($"Library {lib.Id} is in sync.");
         return 0;
     }
@@ -277,8 +306,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
             Type = EFileTransactionType.PUSH,
             BlockChecksums = localFileBlocklist.Select(x => x.Checksum).ToArray(),
             TotalChecksum = localFileTotalChecksum,
-            DateModified = localFileInfo.LastWriteTimeUtc,
-            DateCreated = localFileInfo.CreationTimeUtc,
+            DateModifiedFile = localFileInfo.LastWriteTimeUtc,
+            DateCreatedFile = localFileInfo.CreationTimeUtc,
         });
         logger.LogDebug($"Began transaction with result: {JsonSerializer.Serialize(transaction)}");
         #endregion
@@ -296,7 +325,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
                 Checksum = block.Checksum,
                 Content = block.Payload,
                 TransactionId = transaction.Id,
-                LibraryId = lib.Id,
+                LibraryId = lib.RemoteId,
                 Offset = block.Offset,
                 Size = block.Payload.Length,
             });
@@ -306,6 +335,29 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #region finalize transaction
         var result = await apiClient.FinishFileTransactionAsync(transaction.Id);
         logger.LogDebug($"Push of file '${localFileInfo.Name}' finish with result: ${JsonSerializer.Serialize(result)}");
+        #endregion
+
+        return ExitCodes.Success;
+    }
+    #endregion
+    #region Delete file
+    public async Task<int> DeleteFile(Guid localLibId, string fileLocalPath)
+    {
+        #region load
+        var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
+        string file = fileLocalPath;
+        #endregion
+        
+        #region Delete file from remote
+        await apiClient.DeleteFileAsync(lib.RemoteId, file);
+        logger.LogInfo($"Deleted file {fileLocalPath} from remote.");
+        #endregion
+        #region
+        File dbFile = await repoWrap.FileRepo.QueryAll()
+            .Include(x => x.Library)
+            .FirstAsync(x => x.Library.Id == localLibId && x.FileLibraryPath == file);
+        await repoWrap.FileRepo.DeleteAsync(dbFile);
+        logger.LogInfo($"Deleted file {fileLocalPath} from local database.");
         #endregion
 
         return ExitCodes.Success;
@@ -348,7 +400,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         return diff;
     }
     #endregion
-    
+
     #region Utility
     private async Task<bool> IsLibraryCloned(Guid remoteLibraryId)
     {
