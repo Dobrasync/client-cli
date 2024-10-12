@@ -1,31 +1,30 @@
 using Lamashare.CLI.Db;
 using Lamashare.CLI.Db.Entities;
-using File = Lamashare.CLI.Db.Entities.File;
 
 namespace LamashareApi.Database.Repos;
 
 public class RepoWrapper(LamashareContext context) : IRepoWrapper
 {
-    private IRepo<SystemSetting> _systemSettingRepo = null!;
-    private IRepo<Library> _libraryRepo = null!;
-    private IRepo<File> _fileRepo = null!;
+    private IRepo<SystemSettingEntity> _systemSettingRepo = null!;
+    private IRepo<LibraryEntity> _libraryRepo = null!;
+    private IRepo<FileEntity> _fileRepo = null!;
 
     public LamashareContext DbContext => context;
 
     #region Repos
-    public IRepo<SystemSetting> SystemSettingRepo
+    public IRepo<SystemSettingEntity> SystemSettingRepo
     {
-        get { return _systemSettingRepo ??= new Repo<SystemSetting>(context); }
+        get { return _systemSettingRepo ??= new Repo<SystemSettingEntity>(context); }
     }
 
-    public IRepo<Library> LibraryRepo
+    public IRepo<LibraryEntity> LibraryRepo
     {
-        get { return _libraryRepo ??= new Repo<Library>(context); }
+        get { return _libraryRepo ??= new Repo<LibraryEntity>(context); }
     }
 
-    public IRepo<File> FileRepo
+    public IRepo<FileEntity> FileRepo
     {
-        get { return _fileRepo ??= new Repo<File>(context); }
+        get { return _fileRepo ??= new Repo<FileEntity>(context); }
     }
     #endregion
 }

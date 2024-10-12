@@ -6,11 +6,11 @@ namespace Lamashare.CLI.Services.SystemSetting;
 
 public class SystemSettingService(IRepoWrapper repoWrap, ILoggerService logger) : ISystemSettingService
 {
-    public async Task<List<Db.Entities.SystemSetting>> GetAllSystemSettingsAsync()
+    public async Task<List<Db.Entities.SystemSettingEntity>> GetAllSystemSettingsAsync()
     {
         return await repoWrap.SystemSettingRepo.QueryAll().ToListAsync();
     }
-    public async Task<Db.Entities.SystemSetting> SetSettingAsync(ESystemSetting key, string newValue)
+    public async Task<Db.Entities.SystemSettingEntity> SetSettingAsync(ESystemSetting key, string newValue)
     {
         var setting = await repoWrap.DbContext.SystemSettings.FirstOrDefaultAsync(x => x.Id == key.ToString());
         if (setting == null)
@@ -24,13 +24,13 @@ public class SystemSettingService(IRepoWrapper repoWrap, ILoggerService logger) 
         logger.LogInfo($"System setting {key} updated to '{newValue}'.");
         return setting;
     }
-    public async Task<Db.Entities.SystemSetting?> TryGetSettingAsync(ESystemSetting key)
+    public async Task<Db.Entities.SystemSettingEntity?> TryGetSettingAsync(ESystemSetting key)
     {
         var setting = await repoWrap.SystemSettingRepo.QueryAll().FirstOrDefaultAsync(x => x.Id == key.ToString());
         return setting;
     }
     
-    public async Task<Db.Entities.SystemSetting> GetSettingThrowsAsync(ESystemSetting key)
+    public async Task<Db.Entities.SystemSettingEntity> GetSettingThrowsAsync(ESystemSetting key)
     {
         var set = await TryGetSettingAsync(key);
         if (set == null)

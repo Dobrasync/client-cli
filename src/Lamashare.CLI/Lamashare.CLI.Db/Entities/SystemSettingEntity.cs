@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lamashare.CLI.Db.Entities;
 
-public class SystemSetting
+public class SystemSettingEntity
 {
     [MaxLength(64)]
     [Key]

@@ -12,7 +12,6 @@ using LamashareApi.Database.Repos;
 using LamashareCore;
 using LamashareCore.Util;
 using Newtonsoft.Json;
-using File = Lamashare.CLI.Db.Entities.File;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Lamashare.CLI.Services.Sync;
@@ -101,7 +100,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #endregion
         
         #region Create db entry
-        var localLib = new Library()
+        var localLib = new LibraryEntity()
         {
             LocalPath = localLibraryPath,
             RemoteId = remoteLibraryId,
@@ -173,13 +172,13 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #endregion
 
         #region Get diff
-        List<File> deletedFiles = new();
+        List<FileEntity> deletedFiles = new();
         var diff = await Diff(lib.Id);
         
         #region Remove deleted files from diff
         foreach (var requiredByLocal in diff.RequiredByLocal)
         {
-            File? dbFile = repoWrap.FileRepo.QueryAll().FirstOrDefault(x => x.Library == lib && x.FileLibraryPath == requiredByLocal);
+            FileEntity? dbFile = repoWrap.FileRepo.QueryAll().FirstOrDefault(x => x.LibraryEntity == lib && x.FileLibraryPath == requiredByLocal);
             if (dbFile == null) continue;
             
             // If the file exists in DB but not on file system, we assume it's been deleted.
@@ -242,7 +241,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     public async Task<int> PullFile(Guid localLibId, string fileLocalPath)
     {
         #region load file
-        Library lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
+        LibraryEntity lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
         string file = fileLocalPath;
         #endregion
         
@@ -345,19 +344,33 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     {
         #region load
         var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
-        string file = fileLocalPath;
         #endregion
         
         #region Delete file from remote
-        await apiClient.DeleteFileAsync(lib.RemoteId, file);
+        try
+        {
+            await apiClient.DeleteFileAsync(lib.RemoteId, fileLocalPath);
+        }
+        catch (ApiException e)
+        {
+            if (!e.StatusCode.Equals(HttpStatusCode.NotFound)) throw;
+
+            logger.LogDebug($"Failed to delete file '{fileLocalPath}' from remote, it wasn't found.");
+        }
         logger.LogInfo($"Deleted file {fileLocalPath} from remote.");
         #endregion
-        #region
-        File dbFile = await repoWrap.FileRepo.QueryAll()
-            .Include(x => x.Library)
-            .FirstAsync(x => x.Library.Id == localLibId && x.FileLibraryPath == file);
-        await repoWrap.FileRepo.DeleteAsync(dbFile);
-        logger.LogInfo($"Deleted file {fileLocalPath} from local database.");
+        #region Delete file from local db
+        FileEntity? file = await repoWrap.FileRepo
+            .QueryAll()
+            .Include(x => x.LibraryEntity)
+            .FirstOrDefaultAsync(x => x.LibraryEntity == lib && x.FileLibraryPath == fileLocalPath);
+
+        if (file == null) return ExitCodes.Success;
+        
+        #region Remove blocks from local db that arent present on other files
+        
+        #endregion
+        await repoWrap.FileRepo.DeleteAsync(file);
         #endregion
 
         return ExitCodes.Success;
@@ -366,41 +379,90 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #region Diff
     public async Task<LibraryDiffDto> Diff(Guid localLibId)
     {
-        var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
-        
-        #region make local file list
-        logger.LogInfo("Generating local library file tree...");
-        var localFiles = Directory.GetFiles(lib.LocalPath, "*.*", SearchOption.AllDirectories);
-        List<FileInfoDto> lfi = new();
-        foreach (string syspath in localFiles)
-        {
-            FileInfo info = new(syspath);
-            string libpath = FileUtil.FileSysPathToLibPath(syspath, lib.LocalPath);
-            
-            lfi.Add(new()
-            {
-                LibraryId = localLibId,
-                DateModified = info.LastWriteTimeUtc,
-                DateCreated = info.CreationTimeUtc,
-                TotalChecksum = await FileUtil.GetFileTotalChecksumAsync(syspath),
-                FileLibraryPath = libpath,
-            });
-        }
+        #region load library and its files
+        LibraryEntity lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
+        List<FileEntity> libraryFiles = await GetLocalLibraryFileTree(lib.Id);
         #endregion
         
-        #region Get diff list
+        #region Get diff list from remote
         logger.LogInfo("Getting diff from remote...");
         var diff = await apiClient.GetDiffAsync(new()
         {
             LibraryId = lib.RemoteId,
-            FilesOnLocal = lfi,
+            FilesOnLocal = libraryFiles.Select(x => new FileInfoDto()
+            {
+                LibraryId = lib.RemoteId,
+                FileLibraryPath = x.FileLibraryPath,
+                TotalChecksum = x.TotalChecksum,
+                DateModified = x.DateModified,
+                DateCreated = x.DateCreated,
+            }).ToList(),
         });
         #endregion
 
         return diff;
     }
     #endregion
+    #region Get library file tree
+    private async Task<List<FileEntity>> GetLocalLibraryFileTree(Guid localLibId)
+    {
+        #region Load library
+        var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
+        #endregion
+        #region Re-Generate local file tree and update db
+        logger.LogInfo("Getting local library file tree...");
+        var localFiles = Directory.GetFiles(lib.LocalPath, "*.*", SearchOption.AllDirectories);
+        List<FileEntity> libraryFiles = new();
+        foreach (string syspath in localFiles)
+        {
+            #region Get file info from file system
+            FileInfo info = new(syspath);
+            string fileLibPath = FileUtil.FileSysPathToLibPath(syspath, lib.LocalPath);
+            string fileTotalChecksum = await FileUtil.GetFileTotalChecksumAsync(syspath);
+            DateTimeOffset dateModified = info.LastWriteTimeUtc;
+            DateTimeOffset dateCreated = info.CreationTimeUtc;
+            #endregion
+            #region Update local db (add or update file)
+            #region Load existing file if exists
+            FileEntity? existingDbFile = await repoWrap.FileRepo
+                .QueryAll()
+                .Include(x => x.LibraryEntity)
+                .FirstOrDefaultAsync(x => x.LibraryEntity.Id == localLibId && x.FileLibraryPath == fileLibPath);
+            #endregion
+            #region Create or update existing db file
+            if (existingDbFile != null)
+            {
+                existingDbFile.TotalChecksum = fileTotalChecksum;
+                existingDbFile.DateCreated = dateCreated;
+                existingDbFile.DateModified = dateModified;
+                
+                logger.LogDebug($"Updating file in local db: {JsonSerializer.Serialize(existingDbFile)}");
+                await repoWrap.FileRepo.UpdateAsync(existingDbFile);
+                libraryFiles.Add(existingDbFile);
+            }
+            else
+            {
+                FileEntity newFileEntity = new()
+                {
+                    FileLibraryPath = fileLibPath,
+                    TotalChecksum = fileTotalChecksum,
+                    LibraryEntity = lib,
+                    DateCreated = dateCreated,
+                    DateModified = dateModified,
+                };
+                logger.LogDebug($"Adding file to local db: {JsonSerializer.Serialize(newFileEntity)}");
+                await repoWrap.FileRepo.InsertAsync(newFileEntity);
+                libraryFiles.Add(newFileEntity);
+            }
+            #endregion
+            #endregion
+        }
+        #endregion
 
+        return libraryFiles;
+    }
+    #endregion
+    
     #region Utility
     private async Task<bool> IsLibraryCloned(Guid remoteLibraryId)
     {

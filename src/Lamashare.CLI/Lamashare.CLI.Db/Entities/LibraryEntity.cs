@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lamashare.CLI.Db.Entities;
 
-public class Library : BaseEntity
+public class LibraryEntity : BaseEntity
 {
     /// <summary>
     /// Path to the directory in which the library is stored locally. 
@@ -13,5 +13,5 @@ public class Library : BaseEntity
     [Required]
     public Guid RemoteId { get; set; }
 
-    public List<File> Files { get; set; } = new();
+    public List<FileEntity> Files { get; set; } = new();
 }
