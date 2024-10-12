@@ -1,13 +1,13 @@
-using Lamashare.CLI.Db;
 using Lamashare.CLI.Db.Entities;
 
-namespace LamashareApi.Database.Repos;
+namespace Lamashare.CLI.Db.Repo;
 
 public class RepoWrapper(LamashareContext context) : IRepoWrapper
 {
     private IRepo<SystemSettingEntity> _systemSettingRepo = null!;
     private IRepo<LibraryEntity> _libraryRepo = null!;
     private IRepo<FileEntity> _fileRepo = null!;
+    private IRepo<BlockEntity> _blockRepo = null!;
 
     public LamashareContext DbContext => context;
 
@@ -25,6 +25,11 @@ public class RepoWrapper(LamashareContext context) : IRepoWrapper
     public IRepo<FileEntity> FileRepo
     {
         get { return _fileRepo ??= new Repo<FileEntity>(context); }
+    }
+    
+    public IRepo<BlockEntity> BlockRepo
+    {
+        get { return _blockRepo ??= new Repo<BlockEntity>(context); }
     }
     #endregion
 }

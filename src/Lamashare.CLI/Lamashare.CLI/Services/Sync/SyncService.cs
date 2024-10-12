@@ -1,14 +1,15 @@
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using Lamashare.CLI.ApiGen.Mainline;
 using Lamashare.CLI.Const;
 using Lamashare.CLI.Db.Entities;
 using Lamashare.CLI.Db.Enums;
+using Lamashare.CLI.Db.Repo;
 using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
 using Lamashare.CLI.Shared.Exceptions;
-using LamashareApi.Database.Repos;
 using LamashareCore;
 using LamashareCore.Util;
 using Newtonsoft.Json;
@@ -340,7 +341,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     }
     #endregion
     #region Delete file
-    public async Task<int> DeleteFile(Guid localLibId, string fileLocalPath)
+    private async Task<int> DeleteFile(Guid localLibId, string fileLocalPath)
     {
         #region load
         var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
@@ -353,7 +354,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         }
         catch (ApiException e)
         {
-            if (!e.StatusCode.Equals(HttpStatusCode.NotFound)) throw;
+            if (e.StatusCode != 404) throw;
 
             logger.LogDebug($"Failed to delete file '{fileLocalPath}' from remote, it wasn't found.");
         }
@@ -363,12 +364,25 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         FileEntity? file = await repoWrap.FileRepo
             .QueryAll()
             .Include(x => x.LibraryEntity)
+            .Include(x => x.Blocks)
+            .ThenInclude(x => x.Files)
             .FirstOrDefaultAsync(x => x.LibraryEntity == lib && x.FileLibraryPath == fileLocalPath);
 
         if (file == null) return ExitCodes.Success;
         
         #region Remove blocks from local db that arent present on other files
+        List<BlockEntity> blocksToRemove = file.Blocks
+            .Where(x => x.Files.Count() <= 1)
+            .ToList();
+        await repoWrap.BlockRepo.DeleteRangeAsync(blocksToRemove);
+        #endregion
+        #region Update remaining blocks file list
+        List<BlockEntity> blocksToUpdate = file.Blocks
+            .Where(x => x.Files.Count() > 1)
+            .ToList();
         
+        blocksToUpdate.ForEach(x => x.Files.Remove(file));
+        await repoWrap.BlockRepo.UpdateRangeAsync(blocksToUpdate);
         #endregion
         await repoWrap.FileRepo.DeleteAsync(file);
         #endregion
@@ -427,17 +441,56 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
             FileEntity? existingDbFile = await repoWrap.FileRepo
                 .QueryAll()
                 .Include(x => x.LibraryEntity)
+                .Include(x => x.Blocks)
+                .ThenInclude(x => x.Files)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(x => x.LibraryEntity.Id == localLibId && x.FileLibraryPath == fileLibPath);
             #endregion
             #region Create or update existing db file
             if (existingDbFile != null)
             {
+                // Regenerate block index if the total checksum has changed
+                // TODO: Optimization - Introduce a ContentChecksum that excludes
+                // metadata changes so we dont have to regenerate blocks
+                // even if its just the metadata that has changed.
+                if (fileTotalChecksum != existingDbFile.TotalChecksum)
+                {
+                    List<LamashareCore.Models.Block> newBlocks = FileUtil.GetFileBlocks(syspath);
+
+                    List<BlockEntity> newBlockAssembly = new();
+                    foreach (var newBlock in newBlocks)
+                    {
+                        BlockEntity? existingBlock = await repoWrap.BlockRepo
+                            .QueryAll()
+                            .FirstOrDefaultAsync(x => x.Checksum == newBlock.Checksum);
+
+                        if (existingBlock != null)
+                        {
+                            newBlockAssembly.Add(existingBlock);
+                        }
+                        else
+                        {
+                            existingBlock = new()
+                            {
+                                Checksum = newBlock.Checksum,
+                                Files = [existingDbFile],
+                                Offset = newBlock.Offset,
+                                Size = newBlock.Payload.Length,
+                                Library = existingDbFile.LibraryEntity,
+                            };
+                            await repoWrap.BlockRepo.InsertAsync(existingBlock);
+                            newBlockAssembly.Add(existingBlock);
+                        }
+                    }
+
+                    existingDbFile.Blocks = newBlockAssembly;
+                }
                 existingDbFile.TotalChecksum = fileTotalChecksum;
                 existingDbFile.DateCreated = dateCreated;
                 existingDbFile.DateModified = dateModified;
                 
-                logger.LogDebug($"Updating file in local db: {JsonSerializer.Serialize(existingDbFile)}");
                 await repoWrap.FileRepo.UpdateAsync(existingDbFile);
+                await DeleteOrphanedBlocks();
                 libraryFiles.Add(existingDbFile);
             }
             else
@@ -450,7 +503,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
                     DateCreated = dateCreated,
                     DateModified = dateModified,
                 };
-                logger.LogDebug($"Adding file to local db: {JsonSerializer.Serialize(newFileEntity)}");
+
                 await repoWrap.FileRepo.InsertAsync(newFileEntity);
                 libraryFiles.Add(newFileEntity);
             }
@@ -464,6 +517,15 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #endregion
     
     #region Utility
+    private async Task DeleteOrphanedBlocks()
+    {
+        List<BlockEntity> toDelete = await repoWrap.BlockRepo.QueryAll().Where(x => !x.Files.Any()).ToListAsync();
+        if (!toDelete.Any()) return;
+        
+        logger.LogInfo($"Deleting {toDelete.Count()} orphaned blocks...");
+        await repoWrap.BlockRepo.DeleteRangeAsync(toDelete);
+    }
+    
     private async Task<bool> IsLibraryCloned(Guid remoteLibraryId)
     {
         var match = await repoWrap.LibraryRepo.QueryAll().FirstOrDefaultAsync(x => x.RemoteId == remoteLibraryId);

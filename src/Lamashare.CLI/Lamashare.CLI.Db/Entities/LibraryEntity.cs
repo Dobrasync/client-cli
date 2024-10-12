@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Lamashare.CLI.Db.Entities.Base;
 
 namespace Lamashare.CLI.Db.Entities;
 

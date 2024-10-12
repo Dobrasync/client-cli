@@ -1,6 +1,6 @@
 using Lamashare.CLI.Db.Enums;
+using Lamashare.CLI.Db.Repo;
 using Lamashare.CLI.Shared.Exceptions;
-using LamashareApi.Database.Repos;
 
 namespace Lamashare.CLI.Services.SystemSetting;
 

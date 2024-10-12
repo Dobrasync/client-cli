@@ -1,8 +1,7 @@
-using Lamashare.CLI.Db;
 using Lamashare.CLI.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace LamashareApi.Database.Repos;
+namespace Lamashare.CLI.Db.Repo;
 
 public class Repo<TEntity> : IRepo<TEntity> where TEntity : class
 {

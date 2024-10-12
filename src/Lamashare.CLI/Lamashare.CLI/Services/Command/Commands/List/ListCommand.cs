@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using LamashareApi.Database.Repos;
+using Lamashare.CLI.Db.Repo;
 
 namespace Lamashare.CLI.Services.Command.Commands.List;
 

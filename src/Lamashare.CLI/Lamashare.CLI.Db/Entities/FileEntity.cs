@@ -1,3 +1,5 @@
+using Lamashare.CLI.Db.Entities.Base;
+
 namespace Lamashare.CLI.Db.Entities;
 
 public class FileEntity : BaseEntity

@@ -1,6 +1,5 @@
 using Lamashare.CLI.ApiGen.Mainline;
 using Lamashare.CLI.Db.Entities;
-using LamashareApi.Database.Repos;
 
 namespace Lamashare.CLI.Services.Command.Commands.Clone;
 

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Lamashare.CLI.Db.Entities;
+namespace Lamashare.CLI.Db.Entities.Base;
 
 public abstract class BaseEntity
 {

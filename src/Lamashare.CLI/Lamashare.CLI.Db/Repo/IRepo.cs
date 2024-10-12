@@ -1,7 +1,4 @@
-using Lamashare.CLI.Db.Entities;
-using Lamashare.CLI.Db.Enums;
-
-namespace LamashareApi.Database.Repos;
+namespace Lamashare.CLI.Db.Repo;
 
 public interface IRepo<TEntity>
 {

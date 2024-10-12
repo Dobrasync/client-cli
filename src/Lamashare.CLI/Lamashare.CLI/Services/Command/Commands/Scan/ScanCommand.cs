@@ -11,12 +11,15 @@ public class ScanCommand(ISyncService syncService, ILoggerService logger) : ICom
 
     public async Task<int> Execute(string[] args)
     {
+        DateTimeOffset startTime = DateTimeOffset.UtcNow;
         var result = Parser.Default.ParseArguments<ScanOptions>(args);
         if (result.Errors.Any()) return 1;
 
         if (result.Value.SyncAll)
         {
-            return await syncService.SyncAllLibraries();
+            int c = await syncService.SyncAllLibraries();
+            logger.LogInfo($"Sync took {(DateTimeOffset.UtcNow - startTime).TotalSeconds} seconds.");
+            return c;
         }
 
         if (result.Value.LibraryId == null)
@@ -25,6 +28,9 @@ public class ScanCommand(ISyncService syncService, ILoggerService logger) : ICom
             return ExitCodes.Failure;
         }
 
-        return await syncService.SyncLibrary(result.Value.LibraryId ?? new Guid());
+        int exitCode = await syncService.SyncLibrary(result.Value.LibraryId ?? new Guid());
+
+        logger.LogInfo($"Sync took {(DateTimeOffset.UtcNow - startTime).TotalSeconds} seconds.");
+        return exitCode;
     }
 }

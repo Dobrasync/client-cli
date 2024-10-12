@@ -1,7 +1,7 @@
 ﻿using Lamashare.CLI.ApiGen.Mainline;
+using Lamashare.CLI.Db.Repo;
 using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
-using LamashareApi.Database.Repos;
 using Microsoft.Extensions.Hosting;
 
 

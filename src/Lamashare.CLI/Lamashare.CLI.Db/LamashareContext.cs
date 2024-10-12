@@ -12,6 +12,7 @@ public class LamashareContext : DbContext
     public virtual DbSet<SystemSettingEntity> SystemSettings { get; set; }
     public virtual DbSet<LibraryEntity> Libraries { get; set; }
     public virtual DbSet<FileEntity> Files { get; set; }
+    public virtual DbSet<BlockEntity> Blocks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -1,7 +1,6 @@
-using Lamashare.CLI.Db;
 using Lamashare.CLI.Db.Entities;
 
-namespace LamashareApi.Database.Repos;
+namespace Lamashare.CLI.Db.Repo;
 
 public interface IRepoWrapper
 {
@@ -9,4 +8,5 @@ public interface IRepoWrapper
     IRepo<SystemSettingEntity> SystemSettingRepo { get; }
     IRepo<LibraryEntity> LibraryRepo { get; }
     IRepo<FileEntity> FileRepo { get; }
+    IRepo<BlockEntity> BlockRepo { get; }
 }

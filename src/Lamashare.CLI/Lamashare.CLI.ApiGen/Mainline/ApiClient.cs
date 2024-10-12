@@ -2721,9 +2721,6 @@ namespace Lamashare.CLI.ApiGen.Mainline
         [System.Runtime.Serialization.EnumMember(Value = @"PUSH")]
         PUSH = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"DELETE")]
-        DELETE = 2,
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -2737,9 +2734,6 @@ namespace Lamashare.CLI.ApiGen.Mainline
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FileInfoDto
     {
-        [Newtonsoft.Json.JsonProperty("fileId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid FileId { get; set; }
-
         [Newtonsoft.Json.JsonProperty("libraryId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid LibraryId { get; set; }
 
