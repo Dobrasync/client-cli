@@ -1,4 +1,7 @@
+using Lamashare.CLI.Const;
+using Lamashare.CLI.Services.Command.Commands.Autostart;
 using Lamashare.CLI.Services.Command.Commands.Configure;
+using Lamashare.CLI.Services.Command.Commands.Daemon;
 using Lamashare.CLI.Services.Command.Commands.List;
 using Lamashare.CLI.Services.Command.Commands.Remove;
 using Lamashare.CLI.Services.Command.Commands.Stats;
@@ -17,15 +20,22 @@ public class CommandService(IServiceProvider serviceProvider, ILoggerService log
         ActivatorUtilities.CreateInstance<ConfigureCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ScanCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<StatsCommand>(serviceProvider),
+        ActivatorUtilities.CreateInstance<DaemonCommand>(serviceProvider),
+        ActivatorUtilities.CreateInstance<AutostartCommand>(serviceProvider),
     };
     public async Task<int> Consume(string[] args)
     {
-        if (args.Length == 0) return 1;
+        if (args.Length == 0)
+        {
+            logger.LogFatal($"No command provided. Valid commands are: {string.Join(", ", commands.Select(x => x.GetName()).ToArray())}");
+            return ExitCodes.Failure;
+        }
+        
         ICommand? commandMatch = commands.FirstOrDefault(x => x.GetName().Equals(args[0], StringComparison.OrdinalIgnoreCase));
         if (commandMatch == null)
         {
             logger.LogFatal($"Invalid command '{args[0]}'. Valid commands are: {string.Join(", ", commands.Select(x => x.GetName()).ToArray())}");
-            return 1;
+            return ExitCodes.Failure;
         }
         
         int exitCode = await commandMatch.Execute(args);

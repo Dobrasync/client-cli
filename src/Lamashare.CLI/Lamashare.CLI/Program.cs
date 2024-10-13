@@ -1,8 +1,11 @@
 ﻿using Lamashare.CLI.ApiGen.Mainline;
+using Lamashare.CLI.Const;
 using Lamashare.CLI.Db.Repo;
 using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
+using Lamashare.CLI.Worker;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Systemd;
 
 
 #region Bootstrap
@@ -11,7 +14,10 @@ using Microsoft.Extensions.Hosting;
 
 var parser = new Parser(x => x.IgnoreUnknownArguments = true);
 var result = parser.ParseArguments<Options>(args);
-if (result.Errors.Any()) return 1;
+if (result.Errors.Any())
+{
+    return ExitCodes.Failure;
+}
 #endregion
 
 #endregion
@@ -55,6 +61,28 @@ services.AddScoped<IBlockService, BlockService>();
 #region OAPI
 services.AddHttpClient<IApiClient, ApiClient>(_ => new ApiClient("http://localhost:5127", new HttpClient()));
 #endregion
+#endregion
+
+
+#region Daemon mode
+if (result.Value.Action.Equals("daemon", StringComparison.OrdinalIgnoreCase))
+{
+    var hostBuilder = Host.CreateDefaultBuilder()
+        .UseSystemd()
+        .ConfigureServices((hostContext, s) =>
+        {
+            s.AddHostedService<LamashareWorker>();
+            foreach (var ser in services)
+            {
+                s.Add(ser);
+            }
+        });
+
+    var host = hostBuilder.Build();
+    await host.RunAsync();
+
+    return ExitCodes.Success;
+}
 #endregion
 
 #region Build services
