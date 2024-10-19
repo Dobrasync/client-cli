@@ -1,9 +1,0 @@
-[Unit]
-Description=Lamashare background services
-
-[Service]
-ExecStart={ExecStart}
-Restart=always
-
-[Install]
-WantedBy=default.target
