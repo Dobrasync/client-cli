@@ -16,3 +16,5 @@
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/bin/Debug/net8.0/Lamashare.CLI.Shared.dll
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/bin/Debug/net8.0/Lamashare.CLI.Shared.pdb
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/obj/Debug/net8.0/Lamashar.678440B1.Up2Date
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/bin/Debug/net8.0/Newtonsoft.Json.dll
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Db/bin/Debug/net8.0/Newtonsoft.Json.xml

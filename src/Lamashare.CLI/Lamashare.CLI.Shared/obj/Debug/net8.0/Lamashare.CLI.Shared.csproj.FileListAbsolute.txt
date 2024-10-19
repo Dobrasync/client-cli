@@ -10,3 +10,7 @@
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/refint/Lamashare.CLI.Shared.dll
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.pdb
 /home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/ref/Lamashare.CLI.Shared.dll
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/bin/Debug/net8.0/Newtonsoft.Json.dll
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/bin/Debug/net8.0/Newtonsoft.Json.xml
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashare.CLI.Shared.csproj.AssemblyReference.cache
+/home/taxset/Git Repos/OminousLama/lamashare-cli/src/Lamashare.CLI/Lamashare.CLI.Shared/obj/Debug/net8.0/Lamashar.8C4F192B.Up2Date

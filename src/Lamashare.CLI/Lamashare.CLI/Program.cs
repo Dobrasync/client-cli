@@ -1,6 +1,7 @@
 ﻿using Lamashare.CLI.ApiGen.Mainline;
 using Lamashare.CLI.Const;
 using Lamashare.CLI.Db.Repo;
+using Lamashare.CLI.Services.Auth;
 using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
 using Lamashare.CLI.Worker;
@@ -58,6 +59,7 @@ services.AddScoped<ISyncService, SyncService>();
 services.AddScoped<ICommandService, CommandService>();
 #endregion
 services.AddScoped<IBlockService, BlockService>();
+services.AddScoped<IAuthService, AuthService>();
 #region OAPI
 services.AddHttpClient<IApiClient, ApiClient>(_ => new ApiClient("http://localhost:5127", new HttpClient()));
 #endregion

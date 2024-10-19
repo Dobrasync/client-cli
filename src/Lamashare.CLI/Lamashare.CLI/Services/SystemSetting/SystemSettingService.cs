@@ -10,7 +10,7 @@ public class SystemSettingService(IRepoWrapper repoWrap, ILoggerService logger) 
     {
         return await repoWrap.SystemSettingRepo.QueryAll().ToListAsync();
     }
-    public async Task<Db.Entities.SystemSettingEntity> SetSettingAsync(ESystemSetting key, string newValue)
+    public async Task<Db.Entities.SystemSettingEntity> SetSettingAsync(ESystemSetting key, string? newValue)
     {
         var setting = await repoWrap.DbContext.SystemSettings.FirstOrDefaultAsync(x => x.Id == key.ToString());
         if (setting == null)

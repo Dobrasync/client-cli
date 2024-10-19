@@ -3,6 +3,7 @@ using Lamashare.CLI.Services.Command.Commands.Autostart;
 using Lamashare.CLI.Services.Command.Commands.Configure;
 using Lamashare.CLI.Services.Command.Commands.Daemon;
 using Lamashare.CLI.Services.Command.Commands.List;
+using Lamashare.CLI.Services.Command.Commands.Logout;
 using Lamashare.CLI.Services.Command.Commands.Remove;
 using Lamashare.CLI.Services.Command.Commands.Stats;
 using Lamashare.CLI.Services.Command.Commands.Sync;
@@ -14,6 +15,7 @@ public class CommandService(IServiceProvider serviceProvider, ILoggerService log
     List<ICommand> commands = new()
     {
         ActivatorUtilities.CreateInstance<LoginCommand>(serviceProvider),
+        ActivatorUtilities.CreateInstance<LogoutCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<CloneCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<RemoveCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ListCommand>(serviceProvider),
