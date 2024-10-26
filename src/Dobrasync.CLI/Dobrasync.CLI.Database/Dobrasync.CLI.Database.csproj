@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Lamashare.CLI.Db</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Lamashare.CLI.Shared\Lamashare.CLI.Shared.csproj" />
+      <ProjectReference Include="..\Dobrasync.CLI.Shared\Dobrasync.CLI.Shared.csproj" />
     </ItemGroup>
 
 </Project>

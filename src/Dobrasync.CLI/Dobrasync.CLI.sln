@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lamashare.CLI", "Lamashare.CLI\Lamashare.CLI.csproj", "{FD6E73BA-9884-4449-92C8-655CBF9276B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dobrasync.CLI.Main", "Dobrasync.CLI.Main\Dobrasync.CLI.Main.csproj", "{FD6E73BA-9884-4449-92C8-655CBF9276B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lamashare.CLI.ApiGen", "Lamashare.CLI.ApiGen\Lamashare.CLI.ApiGen.csproj", "{4C5764BE-77FE-41D7-89B0-396753FA0C17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dobrasync.CLI.ApiGen", "Dobrasync.CLI.ApiGen\Dobrasync.CLI.ApiGen.csproj", "{4C5764BE-77FE-41D7-89B0-396753FA0C17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lamashare.CLI.Db", "Lamashare.CLI.Db\Lamashare.CLI.Db.csproj", "{902EBC6F-2385-4ECD-A0FF-4E7F43737FC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dobrasync.CLI.Database", "Dobrasync.CLI.Database\Dobrasync.CLI.Database.csproj", "{902EBC6F-2385-4ECD-A0FF-4E7F43737FC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lamashare.CLI.Shared", "Lamashare.CLI.Shared\Lamashare.CLI.Shared.csproj", "{F1D48C1E-834B-4695-8165-FED2B0EE9435}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dobrasync.CLI.Shared", "Dobrasync.CLI.Shared\Dobrasync.CLI.Shared.csproj", "{F1D48C1E-834B-4695-8165-FED2B0EE9435}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LamashareCore", "..\..\..\lamashare-core\src\LamashareCore\LamashareCore\LamashareCore.csproj", "{6E468F2A-73EE-47F5-9099-5AEA78608962}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dobrasync.Core.Main", "..\..\submodules\core\src\Dobrasync.Core\Dobrasync.Core.Main\Dobrasync.Core.Main.csproj", "{88E0A568-5819-43DB-A326-68857FF2762F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +32,9 @@ Global
 		{F1D48C1E-834B-4695-8165-FED2B0EE9435}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1D48C1E-834B-4695-8165-FED2B0EE9435}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1D48C1E-834B-4695-8165-FED2B0EE9435}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E468F2A-73EE-47F5-9099-5AEA78608962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E468F2A-73EE-47F5-9099-5AEA78608962}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E468F2A-73EE-47F5-9099-5AEA78608962}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E468F2A-73EE-47F5-9099-5AEA78608962}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88E0A568-5819-43DB-A326-68857FF2762F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E0A568-5819-43DB-A326-68857FF2762F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88E0A568-5819-43DB-A326-68857FF2762F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88E0A568-5819-43DB-A326-68857FF2762F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
