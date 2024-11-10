@@ -61,3 +61,18 @@ TBD
 ## Usage
 
 TBD
+
+
+
+
+<!-- REFLINK -->
+[contributors-shield]: https://img.shields.io/github/contributors/dobrasync/client-cli.svg?style=for-the-badge
+[contributors-url]: https://github.com/dobrasync/client-cli/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/dobrasync/client-cli.svg?style=for-the-badge
+[forks-url]: https://github.com/dobrasync/client-cli/network/members
+[stars-shield]: https://img.shields.io/github/stars/dobrasync/client-cli.svg?style=for-the-badge
+[stars-url]: https://github.com/dobrasync/client-cli/stargazers
+[issues-shield]: https://img.shields.io/github/issues/dobrasync/client-cli.svg?style=for-the-badge
+[issues-url]: https://github.com/dobrasync/client-cli/issues
+[license-shield]: https://img.shields.io/github/license/dobrasync/client-cli.svg?style=for-the-badge
+[license-url]: https://github.com/dobrasync/client-cli/blob/main/LICENSE.txt
