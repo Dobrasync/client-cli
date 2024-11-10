@@ -20,7 +20,7 @@ jobs:
           submodules: true
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore src/Dobrasync.CLI/Dobrasync.CLI.sln
 
       - name: Build the project
         run: dotnet build src/Dobrasync.CLI/Dobrasync.CLI.sln --configuration Release
