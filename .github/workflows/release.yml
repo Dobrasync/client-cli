@@ -50,5 +50,5 @@ jobs:
     
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "./artifacts/bin.zip"
+          artifacts: "./bin.zip"
           tag: "${{ github.event.inputs.version }}"
