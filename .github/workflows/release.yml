@@ -33,12 +33,6 @@ jobs:
           mkdir -p ./artifacts
           zip -r ./artifacts/bin.zip ./publish/*
 
-      - name: Upload Release Artifacts
-        uses: ghcr.io/actions/upload-artifact@v2
-        with:
-          name: dobrasync
-          path: ./artifacts/bin.zip
-
   release:
     runs-on: ubuntu-latest
     needs: build
