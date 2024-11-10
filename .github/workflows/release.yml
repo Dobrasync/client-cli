@@ -31,12 +31,23 @@ jobs:
           mkdir -p ./artifacts
           zip -r ./artifacts/bin.zip ./publish/*
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: bin
+          path: ./artifacts/bin.zip
+
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     needs: build
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: bin
+    
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "./artifacts/bin.zip"
