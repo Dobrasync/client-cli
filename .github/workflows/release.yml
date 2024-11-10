@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build the project
+        run: dotnet build src/Dobrasync.CLI/Dobrasync.CLI.sln --configuration Release
+
+      - name: Publish the app
+        run: dotnet publish src/Dobrasync.CLI/Dobrasync.CLI.sln --configuration Release --output ./publish
+
+      - name: Create release artifact (ZIP)
+        run: |
+          mkdir -p ./artifacts
+          zip -r ./artifacts/bin.zip ./publish/*
+
+      - name: Upload Release Artifacts
+        uses: ghcr.io/actions/upload-artifact@v2
+        with:
+          name: dobrasync
+          path: ./artifacts/bin.zip
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Create release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: Release ${{ github.event.inputs.version }}
+          body: "Release of version ${{ github.event.inputs.version }}"
+
+      - name: Upload build result to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./artifacts/bin.zip
