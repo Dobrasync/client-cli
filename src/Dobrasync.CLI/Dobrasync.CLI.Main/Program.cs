@@ -13,7 +13,10 @@ using Microsoft.Extensions.Hosting.Systemd;
 
 #region CLI Params
 
-var parser = new Parser(x => x.IgnoreUnknownArguments = true);
+var parser = new Parser(x =>
+{
+    x.IgnoreUnknownArguments = true;
+});
 var result = parser.ParseArguments<Options>(args);
 if (result.Errors.Any())
 {
@@ -67,7 +70,7 @@ services.AddHttpClient<IApiClient, ApiClient>(_ => new ApiClient("http://localho
 
 
 #region Daemon mode
-if (result.Value.Action.Equals("daemon", StringComparison.OrdinalIgnoreCase))
+if (result.Value.Action is not null && result.Value.Action.Equals("daemon", StringComparison.OrdinalIgnoreCase))
 {
     var hostBuilder = Host.CreateDefaultBuilder()
         .UseSystemd()
@@ -93,6 +96,13 @@ var servicesProvider = services.BuildServiceProvider();
 #region DB Migrations
 using(var scope = servicesProvider.CreateScope())
 {
+    string? containingDir = Path.GetDirectoryName(Constants.AppSqliteFilePath);
+    if (containingDir is null)
+    {
+        return ExitCodes.Failure;
+    }
+    Directory.CreateDirectory(containingDir);
+    
     var dbContext = scope.ServiceProvider.GetRequiredService<LamashareContext>();
     dbContext.Database.EnsureCreated();
 }

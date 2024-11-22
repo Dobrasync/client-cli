@@ -5,7 +5,9 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Lamashare.CLI</RootNamespace>
+        <RootNamespace>Dobrasync.CLI</RootNamespace>
+        <AssemblyName>Dobrasync</AssemblyName>
+        <Version>0.1.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,10 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\lamashare-core\src\LamashareCore\LamashareCore\LamashareCore.csproj" />
-      <ProjectReference Include="..\..\..\submodules\core\src\Dobrasync.Core\Dobrasync.Core.Main\Dobrasync.Core.Main.csproj" />
       <ProjectReference Include="..\Dobrasync.CLI.ApiGen\Dobrasync.CLI.ApiGen.csproj" />
       <ProjectReference Include="..\Dobrasync.CLI.Database\Dobrasync.CLI.Database.csproj" />
+      <ProjectReference Include="..\submodules\core\src\Dobrasync.Core\Dobrasync.Core.Main\Dobrasync.Core.Main.csproj" />
     </ItemGroup>
 
     <ItemGroup>

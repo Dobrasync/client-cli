@@ -6,5 +6,5 @@ public class Options
     public bool LogDebug { get; set; }
 
     [Value(0, MetaName = "action",  HelpText = "Action", Required = false)]
-    public string Action { get; set; } = default!;
+    public string? Action { get; set; } = default!;
 }

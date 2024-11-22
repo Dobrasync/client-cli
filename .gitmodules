@@ -1,0 +1,3 @@
+[submodule "src/Dobrasync.CLI/submodules/core"]
+	path = src/Dobrasync.CLI/submodules/core
+	url = https://github.com/Dobrasync/core.git
