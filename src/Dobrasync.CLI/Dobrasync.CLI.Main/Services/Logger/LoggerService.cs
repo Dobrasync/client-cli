@@ -1,29 +1,33 @@
+using Microsoft.Extensions.Logging;
+using NLog;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+
 namespace Lamashare.CLI.Services.Logger;
 
-public class LoggerService(ILogger logger) : ILoggerService
+public class LoggerService(ILogger<LoggerService> logger) : ILoggerService
 {
     public void LogDebug(string msg)
     {
-        logger.Debug(msg);
+        logger.LogDebug(msg);
     }
     
     public void LogInfo(string msg)
     {
-        logger.Information(msg);
+        logger.LogInformation(msg);
     }
     
     public void LogWarn(string msg)
     {
-        logger.Warning(msg);
+        logger.LogWarning(msg);
     }
     
     public void LogError(string msg)
     {
-        logger.Error(msg);
+        logger.LogError(msg);
     }
 
     public void LogFatal(string msg)
     {
-        logger.Fatal(msg);
+        logger.LogCritical(msg);
     }
 }

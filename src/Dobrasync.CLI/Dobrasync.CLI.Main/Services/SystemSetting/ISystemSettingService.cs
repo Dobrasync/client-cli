@@ -9,4 +9,6 @@ public interface ISystemSettingService
     public Task<Db.Entities.SystemSettingEntity?> TryGetSettingAsync(ESystemSetting key);
     public Task<Db.Entities.SystemSettingEntity> GetSettingThrowsAsync(ESystemSetting key);
     public Task<string> GetSettingValueThrowsAsync(ESystemSetting key);
+    public Task<string?> GetSettingValueAsync(ESystemSetting key);
+    public string? GetSettingValue(ESystemSetting key);
 }

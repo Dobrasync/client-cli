@@ -14,6 +14,4 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Http;
-global using Serilog;
-global using Serilog.Core;
 global using Constants = Lamashare.CLI.Const.Constants;

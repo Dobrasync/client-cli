@@ -15,9 +15,8 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.1" />
-      <PackageReference Include="Serilog" Version="4.0.1" />
-      <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
-      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+      <PackageReference Include="NLog" Version="5.3.4" />
+      <PackageReference Include="NLog.Extensions.Logging" Version="5.3.15" />
       <PackageReference Include="Zitadel" Version="6.1.2" />
     </ItemGroup>
 

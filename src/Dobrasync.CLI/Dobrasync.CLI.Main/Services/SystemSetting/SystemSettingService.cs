@@ -43,10 +43,32 @@ public class SystemSettingService(IRepoWrapper repoWrap, ILoggerService logger) 
 
     public async Task<string> GetSettingValueThrowsAsync(ESystemSetting key)
     {
+        var s = await GetSettingValueAsync(key);
+        if (s == null)
+        {
+            throw new ArgumentException("Setting has no value.");
+        }
+
+        return s;
+    }
+
+    public async Task<string?> GetSettingValueAsync(ESystemSetting key)
+    {
         var s = await GetSettingThrowsAsync(key);
         if (s.Value == null)
         {
-            throw new ArgumentException("Setting has no value.");
+            return null;
+        }
+
+        return s.Value;
+    }
+    
+    public string? GetSettingValue(ESystemSetting key)
+    {
+        var s = repoWrap.SystemSettingRepo.QueryAll().FirstOrDefault(x => x.Id == key.ToString());
+        if (s == null)
+        {
+            return null;
         }
 
         return s.Value;

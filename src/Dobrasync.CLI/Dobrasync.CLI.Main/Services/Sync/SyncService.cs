@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using Dobrasync.CLI.Util;
 using Lamashare.CLI.ApiGen.Mainline;
 using Lamashare.CLI.Const;
 using Lamashare.CLI.Db.Entities;
@@ -29,6 +30,30 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     public Task<int> Logout()
     {
         throw new NotImplementedException();
+    }
+    #endregion
+    #region Create
+    public async Task<int> CreateLibrary(string name)
+    {
+        LibraryDto createdLibrary;
+        try
+        {
+            createdLibrary = await apiClient.CreateLibraryAsync(new()
+            {
+                Name = name
+            });
+        }
+        catch (ApiException e)
+        {
+            ErrorDto error = e.GetErrorDto();
+            logger.LogFatal($"Failed to create library on remote: {error.Message}");
+            logger.LogDebug($"Stack trace: {e.StackTrace}");
+            return ExitCodes.Failure;
+        }
+
+        logger.LogInfo($"Library '{createdLibrary.Name}' has been created successfully on remote (Remote-ID: '{createdLibrary.Id}').");
+        
+        return ExitCodes.Success;
     }
     #endregion
     #region Clone

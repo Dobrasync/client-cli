@@ -27,12 +27,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
     {
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task BasicAsync();
+        System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task BasicAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get IDP authority
@@ -358,131 +358,32 @@ namespace Lamashare.CLI.ApiGen.Mainline
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<LibraryDto> DeleteLibraryByIdAsync(System.Guid libraryId, System.Threading.CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Create a new user
-        /// </summary>
-        /// <remarks>
-        /// Create a new user
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDto> CreateUserAsync(UserCreateDto body);
+        System.Threading.Tasks.Task<ErrorDto> ErrorDtoExampleAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Create a new user
-        /// </summary>
-        /// <remarks>
-        /// Create a new user
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDto> CreateUserAsync(UserCreateDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ErrorDto> ErrorDtoExampleAsync(System.Threading.CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Register as new user
-        /// </summary>
-        /// <remarks>
-        /// Register and create a new account
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AuthDto> RegisterUserAsync(RegisterUserDto body);
+        System.Threading.Tasks.Task<UserDto> UsersAsync(System.Guid userId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Register as new user
-        /// </summary>
-        /// <remarks>
-        /// Register and create a new account
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<AuthDto> RegisterUserAsync(RegisterUserDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserDto> UsersAsync(System.Guid userId, System.Threading.CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Check username availability
-        /// </summary>
-        /// <remarks>
-        /// Checks if the given username is not used by anyone else
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> IsUsernameAvailableAsync(string username);
+        System.Threading.Tasks.Task<LibraryDtoPaging> LibrariesAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Check username availability
-        /// </summary>
-        /// <remarks>
-        /// Checks if the given username is not used by anyone else
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> IsUsernameAvailableAsync(string username, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Get a user with given id
-        /// </summary>
-        /// <remarks>
-        /// Get a user with given id
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDto> GetUserByIdAsync(System.Guid userId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get a user with given id
-        /// </summary>
-        /// <remarks>
-        /// Get a user with given id
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDto> GetUserByIdAsync(System.Guid userId, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Gets all libraries of user
-        /// </summary>
-        /// <remarks>
-        /// Gets all libraries of user
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LibraryDtoPaging> GetAllLibrariesOfUserAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Gets all libraries of user
-        /// </summary>
-        /// <remarks>
-        /// Gets all libraries of user
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LibraryDtoPaging> GetAllLibrariesOfUserAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Create new library for user
-        /// </summary>
-        /// <remarks>
-        /// Creates a new library for the user
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LibraryDto> CreateUserLibraryAsync(System.Guid userId, LibraryCreateDto body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Create new library for user
-        /// </summary>
-        /// <remarks>
-        /// Creates a new library for the user
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<LibraryDto> CreateUserLibraryAsync(System.Guid userId, LibraryCreateDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<LibraryDtoPaging> LibrariesAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -536,15 +437,15 @@ namespace Lamashare.CLI.ApiGen.Mainline
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task BasicAsync()
+        public virtual System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync()
         {
-            return BasicAsync(System.Threading.CancellationToken.None);
+            return SessionInfoAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task BasicAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -553,11 +454,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/auth/basic"
-                    urlBuilder_.Append("v1/auth/basic");
+                    // Operation Path: "v1/auth/session-info"
+                    urlBuilder_.Append("v1/auth/session-info");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -584,7 +486,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<SessionInfoDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -2123,221 +2030,18 @@ namespace Lamashare.CLI.ApiGen.Mainline
             }
         }
 
-        /// <summary>
-        /// Create a new user
-        /// </summary>
-        /// <remarks>
-        /// Create a new user
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDto> CreateUserAsync(UserCreateDto body)
+        public virtual System.Threading.Tasks.Task<ErrorDto> ErrorDtoExampleAsync()
         {
-            return CreateUserAsync(body, System.Threading.CancellationToken.None);
+            return ErrorDtoExampleAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Create a new user
-        /// </summary>
-        /// <remarks>
-        /// Create a new user
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDto> CreateUserAsync(UserCreateDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ErrorDto> ErrorDtoExampleAsync(System.Threading.CancellationToken cancellationToken)
         {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/user"
-                    urlBuilder_.Append("v1/user");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<UserDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Register as new user
-        /// </summary>
-        /// <remarks>
-        /// Register and create a new account
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<AuthDto> RegisterUserAsync(RegisterUserDto body)
-        {
-            return RegisterUserAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Register as new user
-        /// </summary>
-        /// <remarks>
-        /// Register and create a new account
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<AuthDto> RegisterUserAsync(RegisterUserDto body, System.Threading.CancellationToken cancellationToken)
-        {
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/user/register"
-                    urlBuilder_.Append("v1/user/register");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<AuthDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Check username availability
-        /// </summary>
-        /// <remarks>
-        /// Checks if the given username is not used by anyone else
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<bool> IsUsernameAvailableAsync(string username)
-        {
-            return IsUsernameAvailableAsync(username, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Check username availability
-        /// </summary>
-        /// <remarks>
-        /// Checks if the given username is not used by anyone else
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<bool> IsUsernameAvailableAsync(string username, System.Threading.CancellationToken cancellationToken)
-        {
-            if (username == null)
-                throw new System.ArgumentNullException("username");
-
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -2345,13 +2049,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/user/username-available/{username}"
-                    urlBuilder_.Append("v1/user/username-available/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
+                    // Operation Path: "v1/test/error-dto-example"
+                    urlBuilder_.Append("v1/test/error-dto-example");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -2378,7 +2081,7 @@ namespace Lamashare.CLI.ApiGen.Mainline
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ErrorDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2405,29 +2108,17 @@ namespace Lamashare.CLI.ApiGen.Mainline
             }
         }
 
-        /// <summary>
-        /// Get a user with given id
-        /// </summary>
-        /// <remarks>
-        /// Get a user with given id
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDto> GetUserByIdAsync(System.Guid userId)
+        public virtual System.Threading.Tasks.Task<UserDto> UsersAsync(System.Guid userId)
         {
-            return GetUserByIdAsync(userId, System.Threading.CancellationToken.None);
+            return UsersAsync(userId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get a user with given id
-        /// </summary>
-        /// <remarks>
-        /// Get a user with given id
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDto> GetUserByIdAsync(System.Guid userId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDto> UsersAsync(System.Guid userId, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -2439,12 +2130,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/user/{userId}"
-                    urlBuilder_.Append("v1/user/");
+                    // Operation Path: "v1/users/{userId}"
+                    urlBuilder_.Append("v1/users/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture)));
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -2499,29 +2190,17 @@ namespace Lamashare.CLI.ApiGen.Mainline
             }
         }
 
-        /// <summary>
-        /// Gets all libraries of user
-        /// </summary>
-        /// <remarks>
-        /// Gets all libraries of user
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<LibraryDtoPaging> GetAllLibrariesOfUserAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter)
+        public virtual System.Threading.Tasks.Task<LibraryDtoPaging> LibrariesAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter)
         {
-            return GetAllLibrariesOfUserAsync(userId, page, pageSize, orderBy, filter, System.Threading.CancellationToken.None);
+            return LibrariesAsync(userId, page, pageSize, orderBy, filter, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Gets all libraries of user
-        /// </summary>
-        /// <remarks>
-        /// Gets all libraries of user
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LibraryDtoPaging> GetAllLibrariesOfUserAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<LibraryDtoPaging> LibrariesAsync(System.Guid userId, int? page, int? pageSize, string orderBy, string filter, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -2533,12 +2212,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/user/{userId}/libraries"
-                    urlBuilder_.Append("v1/user/");
+                    // Operation Path: "v1/users/{userId}/libraries"
+                    urlBuilder_.Append("v1/users/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/libraries");
                     urlBuilder_.Append('?');
@@ -2586,105 +2265,6 @@ namespace Lamashare.CLI.ApiGen.Mainline
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<LibraryDtoPaging>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// Create new library for user
-        /// </summary>
-        /// <remarks>
-        /// Creates a new library for the user
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<LibraryDto> CreateUserLibraryAsync(System.Guid userId, LibraryCreateDto body)
-        {
-            return CreateUserLibraryAsync(userId, body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Create new library for user
-        /// </summary>
-        /// <remarks>
-        /// Creates a new library for the user
-        /// </remarks>
-        /// <returns>Ok</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<LibraryDto> CreateUserLibraryAsync(System.Guid userId, LibraryCreateDto body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (userId == null)
-                throw new System.ArgumentNullException("userId");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.StringContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                    if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
-                    // Operation Path: "v1/user/{userId}/library"
-                    urlBuilder_.Append("v1/user/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append("/library");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<LibraryDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2824,17 +2404,6 @@ namespace Lamashare.CLI.ApiGen.Mainline
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class AuthDto
-    {
-        [Newtonsoft.Json.JsonProperty("authToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string AuthToken { get; set; }
-
-        [Newtonsoft.Json.JsonProperty("expiresUtc", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTimeOffset ExpiresUtc { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BlockDto
     {
         [Newtonsoft.Json.JsonProperty("checksum", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -2888,6 +2457,20 @@ namespace Lamashare.CLI.ApiGen.Mainline
 
         [System.Runtime.Serialization.EnumMember(Value = @"PUSH")]
         PUSH = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ErrorDto
+    {
+        [Newtonsoft.Json.JsonProperty("dateTimeUtc", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTimeOffset DateTimeUtc { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("httpStatusCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int HttpStatusCode { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Message { get; set; }
 
     }
 
@@ -3030,17 +2613,6 @@ namespace Lamashare.CLI.ApiGen.Mainline
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class RegisterUserDto
-    {
-        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Username { get; set; }
-
-        [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Password { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Sdto
     {
         [Newtonsoft.Json.JsonProperty("content", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -3049,18 +2621,18 @@ namespace Lamashare.CLI.ApiGen.Mainline
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class StatusDto
+    public partial class SessionInfoDto
     {
-        [Newtonsoft.Json.JsonProperty("ok", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Ok { get; set; }
+        [Newtonsoft.Json.JsonProperty("user", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public UserDto User { get; set; }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class UserCreateDto
+    public partial class StatusDto
     {
-        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Username { get; set; }
+        [Newtonsoft.Json.JsonProperty("ok", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Ok { get; set; }
 
     }
 

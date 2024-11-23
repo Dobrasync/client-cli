@@ -1,12 +1,20 @@
 ﻿using Lamashare.CLI.ApiGen.Mainline;
 using Lamashare.CLI.Const;
+using Lamashare.CLI.Db.Entities;
+using Lamashare.CLI.Db.Enums;
 using Lamashare.CLI.Db.Repo;
 using Lamashare.CLI.Services.Auth;
 using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
 using Lamashare.CLI.Worker;
+using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Hosting.Systemd;
+using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Config;
+using NLog.Extensions.Logging;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 
 #region Bootstrap
@@ -39,21 +47,18 @@ services.AddScoped<IRepoWrapper, RepoWrapper>();
 services.AddScoped<ISystemSettingService, SystemSettingService>();
 #endregion
 #region Logging
-services.AddSerilog(x =>
-{
-    x.WriteTo.Console();
-    if (result.Value.LogDebug)
-    {
-        x.MinimumLevel.Debug();
-        x.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Debug);
-    }
-    else
-    {
-        x.MinimumLevel.Information();
-        x.MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Error);
-    }
-});
 services.AddScoped<ILoggerService, LoggerService>();
+services.AddLogging(x =>
+{
+    x.ClearProviders();
+    x.SetMinimumLevel(result.Value.LogDebug ? LogLevel.Debug : LogLevel.Information);
+    
+    x.AddFilter("Microsoft", LogLevel.Warning);
+    x.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Warning);
+    x.AddFilter("System", LogLevel.Warning);
+
+    x.AddConsole();
+});
 #endregion
 #region SyncService
 services.AddScoped<ISyncService, SyncService>();
@@ -64,7 +69,18 @@ services.AddScoped<ICommandService, CommandService>();
 services.AddScoped<IBlockService, BlockService>();
 services.AddScoped<IAuthService, AuthService>();
 #region OAPI
-services.AddHttpClient<IApiClient, ApiClient>(_ => new ApiClient("http://localhost:5127", new HttpClient()));
+services.AddHttpClient<IApiClient, ApiClient>((client, serviceProvider) =>
+{
+    ISystemSettingService settings = serviceProvider.GetRequiredService<ISystemSettingService>();
+    string baseUrl = settings.GetSettingValue(ESystemSetting.REMOTE_ADDRESS) ?? "default";
+    string? token = settings.GetSettingValue(ESystemSetting.AUTH_TOKEN);
+    
+    client.BaseAddress = new Uri(baseUrl);
+    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+    
+    var apiClient = new ApiClient(baseUrl, client);
+    return apiClient;
+});
 #endregion
 #endregion
 

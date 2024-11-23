@@ -50,18 +50,85 @@
 
 ### Prerequisites
 
-TBD
+- .NET Runtime 8 or later ([instructions](https://github.com/Dobrasync/api))
+- Linux, Windows 10/11 or MacOS
+- Running Dobrasync API ([instructions](https://learn.microsoft.com/en-us/dotnet/core/install/))
 
 ### Installation
 
-TBD
+#### First run
+
+The app will create a `.dobrasync` directory in your OS users home directory. This is where your configuration is stored. You can delete this directory should you wish to completely reset all settings.
+
+#### Setup default library directory
+
+We also need to define where libraries should be downloaded to:
+
+```bash
+dobrasync config --library-dir DEFAULT_LIBRARY_DIRECTORY
+```
+
+Example library directory: `~/dobrasync-libs`
+
+#### Setup temp block directory
+
+Dobrasync transfers files by chunking them into smaller "blocks" to reduce duplicate data. These blocks need to be temporarily stored somewhere on disk during transfer:
+
+```bash
+dobrasync config --temp-block-dir TEMPBLOCK_DIR
+```
+
+Example temp block directory: `~/dobrasync-tempblocks`
+
+
+#### Setup connection to remote
+
+The app needs to know to which remote (Dobrasync API) it should connect to. Do this by running:
+
+```bash
+dobrasync config --remote YOUR_REMOTE_URL
+```
+
+
+#### Login
+
+You'll of course need to log in before you can access any data on the remote:
+
+```bash
+dobrasync login
+```
+
+You will be prompted with a URL to your IdP and a code. Open the displayed URL and enter the code. Click "allow" when prompted for confirmation.
+
+The app will log that sign-in was successful if everything went ok.
+
+#### Verify configuration
+
+You can use `dobrasync config --list` to display the current configuration.
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-TBD
+Make sure you have properly configured your app before starting to use it.
 
+### Creating a library
+
+```
+dobrasync create
+```
+
+### Listing libraries
+
+
+
+### Cloning a library
+
+You clone/download a library by using the clone command:
+
+```bash
+dobrasync clone LIBRARY_ID
+```
 
 
 
