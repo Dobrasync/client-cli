@@ -21,7 +21,7 @@ public class CommandService(IServiceProvider serviceProvider, ILoggerService log
         ActivatorUtilities.CreateInstance<RemoveCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ListCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<ConfigureCommand>(serviceProvider),
-        ActivatorUtilities.CreateInstance<ScanCommand>(serviceProvider),
+        ActivatorUtilities.CreateInstance<SyncCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<StatsCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<DaemonCommand>(serviceProvider),
         ActivatorUtilities.CreateInstance<AutostartCommand>(serviceProvider),

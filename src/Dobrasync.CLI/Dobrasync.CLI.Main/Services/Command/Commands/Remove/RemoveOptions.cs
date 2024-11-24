@@ -10,6 +10,9 @@ public class RemoveOptions : BaseCommandOptions
     [Value(1, MetaName = "Library name or id", HelpText = "Name or Id of the library to be removed", Required = true)]
     public Guid LibraryId { get; set; }
 
-    [Option('r', "remove-directory", Default = false, Required = false)]
-    public bool RemoveDirectory { get; set; } = false;
+    [Option('l', "delete-local", Default = false, Required = false)]
+    public bool RemoveLocalFiles { get; set; } = false;
+    
+    [Option('r', "delete-remote", Default = false, Required = false)]
+    public bool RemoveRemoteFiles { get; set; } = false;
 }

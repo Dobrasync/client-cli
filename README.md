@@ -115,19 +115,93 @@ Make sure you have properly configured your app before starting to use it.
 ### Creating a library
 
 ```
-dobrasync create
+dobrasync create LIBRARY_NAME
 ```
+
+The Remote-ID of the newly created library will be displayed after creation. Use this Remote-ID when cloning.  
 
 ### Listing libraries
 
+```
+dobrasync ls
+```
 
+This command lists all libraries connected to your account, remote and local.
 
 ### Cloning a library
 
 You clone/download a library by using the clone command:
 
 ```bash
-dobrasync clone LIBRARY_ID
+dobrasync clone LIBRARY_REMOTE_ID
+```
+
+Use `dobrasync ls` to get thee Remote-ID of the library you want to clone.
+
+### Remove a library
+
+> ⚠️ These actions can not be undone! Make sure to read over what you typed before committing.
+
+Use the `remove` command to remove a library.
+
+This will remove the library from local library id, but won't delete any files from local machine.
+
+```bash
+dobrasync remove LIBRARY_LOCAL_ID
+```
+
+To remove the local clone and its local files:
+
+```bash
+dobrasync remove LIBRARY_LOCAL_ID --delete-local
+```
+
+To remove the library from local and delete it on remote, but keep files on local machine:
+
+```bash
+dobrasync remove LIBRARY_LOCAL_ID --delete-remote
+```
+
+To delete the local AND remote library and files on local AND remote: 
+
+```bash
+dobrasync remove LIBRARY_LOCAL_ID --delete-local --delete-remote
+```
+
+### Sync a specific library
+
+You can manually sync a library by using the `sync` command.
+
+```bash
+dobrasync sync LIBRARY_LOCAL_ID
+```
+
+### Sync all libraries
+
+Instead of syncing each library individually you can also use the `sync --all` command. This will automatically sync all local libraries.
+
+### Statistics
+
+You can display some statistics by using the `stats` command.
+
+```bash
+dobrasync stats
+```
+
+### Daemon / Run in Background
+
+TBD
+
+### Autostart
+
+TBD
+
+### Logout
+
+You can sign out of your account by using the `logout` command.
+
+```bash
+dobrasync logout
 ```
 
 

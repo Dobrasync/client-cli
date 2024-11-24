@@ -134,12 +134,12 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         await repoWrap.LibraryRepo.InsertAsync(localLib);
         #endregion
         
-        logger.LogInfo("Library has been cloned.");
+        logger.LogInfo($"Library has been cloned (Local-ID: '{localLib.Id}', Local-Directory: '{localLib.LocalPath}').");
         return 0;
     }
     #endregion
     #region Remove
-    public async Task<int> RemoveLibrary(Guid localLibraryId, bool deleteDirectory = false)
+    public async Task<int> RemoveLibrary(Guid localLibraryId, bool deleteDirectory = false, bool deleteRemoteLibrary = false)
     {
         #region Check if library is cloned
         var lib = await repoWrap.LibraryRepo.GetByIdAsync(localLibraryId);
@@ -155,11 +155,18 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         logger.LogInfo("Library has been removed.");
         #endregion
         
-        #region Delete directory
+        #region Delete local files
         if (deleteDirectory && !string.IsNullOrEmpty(lib.LocalPath))
         {
             Directory.Delete(lib.LocalPath, true);
             logger.LogInfo("Library directory deleted.");
+        }
+        #endregion
+        #region Delete remote library
+        if (deleteRemoteLibrary)
+        {
+            await apiClient.DeleteLibraryByIdAsync(lib.RemoteId);
+            logger.LogInfo("Library deleted from remote.");
         }
         #endregion
         

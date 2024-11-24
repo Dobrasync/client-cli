@@ -17,7 +17,7 @@ public class ListCommand(IRepoWrapper repoWrap, ILoggerService logger, IApiClien
         var result = Parser.Default.ParseArguments<ListOptions>(args);
         if (result.Errors.Any()) return 1;
         
-        var sessionInfo = await apiClient.SessionInfoAsync();
+        var sessionInfo = await apiClient.GetSessionInfoAsync();
 
         logger.LogDebug("Loading list...");
         var localLibraries = await repoWrap.LibraryRepo.QueryAll().ToListAsync();

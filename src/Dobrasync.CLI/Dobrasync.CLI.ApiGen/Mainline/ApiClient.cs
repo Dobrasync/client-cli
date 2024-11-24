@@ -27,12 +27,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
     {
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync();
+        System.Threading.Tasks.Task<SessionInfoDto> GetSessionInfoAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<SessionInfoDto> GetSessionInfoAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get IDP authority
@@ -274,24 +274,12 @@ namespace Lamashare.CLI.ApiGen.Mainline
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteFileAsync(System.Guid libraryId, string fileLibraryPath, System.Threading.CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Create new library
-        /// </summary>
-        /// <remarks>
-        /// Create a new library
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<LibraryDto> CreateLibraryAsync(LibraryCreateDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Create new library
-        /// </summary>
-        /// <remarks>
-        /// Create a new library
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<LibraryDto> CreateLibraryAsync(LibraryCreateDto body, System.Threading.CancellationToken cancellationToken);
 
@@ -437,15 +425,15 @@ namespace Lamashare.CLI.ApiGen.Mainline
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync()
+        public virtual System.Threading.Tasks.Task<SessionInfoDto> GetSessionInfoAsync()
         {
-            return SessionInfoAsync(System.Threading.CancellationToken.None);
+            return GetSessionInfoAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<SessionInfoDto> SessionInfoAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<SessionInfoDto> GetSessionInfoAsync(System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1650,13 +1638,7 @@ namespace Lamashare.CLI.ApiGen.Mainline
             }
         }
 
-        /// <summary>
-        /// Create new library
-        /// </summary>
-        /// <remarks>
-        /// Create a new library
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<LibraryDto> CreateLibraryAsync(LibraryCreateDto body)
         {
@@ -1664,13 +1646,7 @@ namespace Lamashare.CLI.ApiGen.Mainline
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Create new library
-        /// </summary>
-        /// <remarks>
-        /// Create a new library
-        /// </remarks>
-        /// <returns>Ok</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<LibraryDto> CreateLibraryAsync(LibraryCreateDto body, System.Threading.CancellationToken cancellationToken)
         {
@@ -1685,7 +1661,7 @@ namespace Lamashare.CLI.ApiGen.Mainline
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);

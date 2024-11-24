@@ -12,7 +12,7 @@ public class RemoveCommand(ISyncService syncService) : ICommand
         var result = Parser.Default.ParseArguments<RemoveOptions>(args);
         if (result.Errors.Any()) return 1;
 
-        int code = await syncService.RemoveLibrary(result.Value.LibraryId, result.Value.RemoveDirectory);
+        int code = await syncService.RemoveLibrary(result.Value.LibraryId, result.Value.RemoveLocalFiles, result.Value.RemoveRemoteFiles);
         return code;
     }
 }

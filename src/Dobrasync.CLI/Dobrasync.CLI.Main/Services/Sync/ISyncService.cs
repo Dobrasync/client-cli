@@ -29,7 +29,7 @@ public interface ISyncService
     /// <param name="libraryId">Local library id</param>
     /// <param name="deleteDirectory">If the local directory should be deleted</param>
     /// <returns></returns>
-    public Task<int> RemoveLibrary(Guid libraryId, bool deleteDirectory);
+    public Task<int> RemoveLibrary(Guid libraryId, bool deleteDirectory, bool deleteRemoteDirectory);
 
     /// <summary>
     /// Synchronizes the given library with remote.
