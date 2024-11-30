@@ -7,6 +7,7 @@ using Lamashare.CLI.Db.Entities;
 using Lamashare.CLI.Db.Enums;
 using Lamashare.CLI.Services.Auth.Dto;
 using Lamashare.CLI.Services.SystemSetting;
+using Lamashare.CLI.Shared.Exceptions;
 using Lamashare.CLI.Shared.Helpers;
 using Zitadel.Api;
 
@@ -16,7 +17,7 @@ public class AuthService(ISystemSettingService settings, IApiClient apiClient, I
 {
     private static readonly HttpHelper httpClient = new HttpHelper();
     
-    public async Task Authenticate()
+    public async Task AuthenticateAsync()
     {
         SystemSettingEntity? authToken = await settings.TryGetSettingAsync(ESystemSetting.AUTH_TOKEN);
         if (authToken != null && !string.IsNullOrEmpty(authToken.Value))
@@ -28,7 +29,7 @@ public class AuthService(ISystemSettingService settings, IApiClient apiClient, I
         await BeginDeviceAuth();
     }
 
-    public async Task Logout()
+    public async Task LogoutAsync()
     {
         SystemSettingEntity? authToken = await settings.TryGetSettingAsync(ESystemSetting.AUTH_TOKEN);
         if (authToken == null || string.IsNullOrEmpty(authToken.Value))
@@ -53,7 +54,7 @@ public class AuthService(ISystemSettingService settings, IApiClient apiClient, I
         logger.LogInfo("Success.");
     }
 
-    public async Task<bool> IsLoggedIn()
+    public async Task<bool> IsLoggedInAsync()
     {
         try
         {
@@ -64,6 +65,11 @@ public class AuthService(ISystemSettingService settings, IApiClient apiClient, I
         {
             return false;
         }
+    }
+    
+    public async Task RequireLoggedInAsync()
+    {
+        if (!(await IsLoggedInAsync())) throw new NotLoggedInException();
     }
 
     private async Task BeginDeviceAuth()

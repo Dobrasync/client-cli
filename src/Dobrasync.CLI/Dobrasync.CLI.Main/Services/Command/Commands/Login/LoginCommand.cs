@@ -18,7 +18,7 @@ public class LoginCommand(IServiceProvider serviceProvider, IAuthService authSer
 
         try
         {
-            await authService.Authenticate();
+            await authService.AuthenticateAsync();
         }
         catch (Exception e)
         {

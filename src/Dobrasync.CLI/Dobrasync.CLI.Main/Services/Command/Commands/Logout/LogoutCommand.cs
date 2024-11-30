@@ -15,7 +15,7 @@ public class LogoutCommand(IAuthService authService) : ICommand
         var result = Parser.Default.ParseArguments<LoginOptions>(args);
         if (result.Errors.Any()) return ExitCodes.Failure;
 
-        await authService.Logout();
+        await authService.LogoutAsync();
 
         return ExitCodes.Success;
     }

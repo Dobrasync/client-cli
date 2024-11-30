@@ -8,6 +8,7 @@ using Lamashare.CLI.Const;
 using Lamashare.CLI.Db.Entities;
 using Lamashare.CLI.Db.Enums;
 using Lamashare.CLI.Db.Repo;
+using Lamashare.CLI.Services.Auth;
 using Lamashare.CLI.Services.Block;
 using Lamashare.CLI.Services.SystemSetting;
 using Lamashare.CLI.Shared.Exceptions;
@@ -18,11 +19,13 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Lamashare.CLI.Services.Sync;
 
-public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerService logger, ISystemSettingService settings, IBlockService blockService) : ISyncService
+public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerService logger, ISystemSettingService settings, IBlockService blockService, IAuthService authService) : ISyncService
 {
     #region Create
     public async Task<int> CreateLibrary(string name)
     {
+        await authService.RequireLoggedInAsync();
+        
         LibraryDto createdLibrary;
         try
         {
@@ -47,6 +50,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #region Clone
     public async Task<int> CloneLibrary(Guid remoteLibraryId, string? localLibraryPath)
     {
+        await authService.RequireLoggedInAsync();
+        
         #region Check if already cloned
         bool alreadyCloned = await IsLibraryCloned(remoteLibraryId);
         if (alreadyCloned)
@@ -129,6 +134,11 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #region Remove
     public async Task<int> RemoveLibrary(Guid localLibraryId, bool deleteDirectory = false, bool deleteRemoteLibrary = false)
     {
+        if (deleteRemoteLibrary)
+        {
+            await authService.RequireLoggedInAsync();
+        }
+        
         #region Check if library is cloned
         var lib = await repoWrap.LibraryRepo.GetByIdAsync(localLibraryId);
         if (lib == null)
@@ -165,6 +175,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #region Sync all
     public async Task<int> SyncAllLibraries()
     {
+        await authService.RequireLoggedInAsync();
+        
         var libs= await repoWrap.LibraryRepo.QueryAll().ToListAsync();
         if (libs.Count == 0)
         {
@@ -182,6 +194,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #region Sync
     public async Task<int> SyncLibrary(Guid localLibId)
     {
+        await authService.RequireLoggedInAsync();
+        
         #region load local library
         logger.LogInfo($"Invoking sync for {localLibId}...");
         var lib = await repoWrap.LibraryRepo.GetByIdAsync(localLibId);
@@ -259,8 +273,10 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     }
     #endregion
     #region Pull file
-    public async Task<int> PullFile(Guid localLibId, string fileLocalPath)
+    private async Task<int> PullFile(Guid localLibId, string fileLocalPath)
     {
+        await authService.RequireLoggedInAsync();
+        
         #region load file
         LibraryEntity lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
         string file = fileLocalPath;
@@ -304,8 +320,10 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     }
     #endregion
     #region Push file
-    public async Task<int> PushFile(Guid localLibId, string fileLocalPath)
+    private async Task<int> PushFile(Guid localLibId, string fileLocalPath)
     {
+        await authService.RequireLoggedInAsync();
+        
         #region load
         var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
         string file = fileLocalPath;
@@ -363,6 +381,8 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     #region Delete file
     private async Task<int> DeleteFile(Guid localLibId, string fileLocalPath)
     {
+        await authService.RequireLoggedInAsync();
+        
         #region load
         var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
         #endregion
@@ -411,8 +431,10 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
     }
     #endregion
     #region Diff
-    public async Task<LibraryDiffDto> Diff(Guid localLibId)
+    private async Task<LibraryDiffDto> Diff(Guid localLibId)
     {
+        await authService.RequireLoggedInAsync();
+        
         #region load library and its files
         LibraryEntity lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
         List<FileEntity> libraryFiles = await GetLocalLibraryFileTree(lib.Id);
