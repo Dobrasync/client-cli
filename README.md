@@ -188,13 +188,6 @@ You can display some statistics by using the `stats` command.
 dobrasync stats
 ```
 
-### Daemon / Run in Background
-
-TBD
-
-### Autostart
-
-TBD
 
 ### Logout
 
