@@ -4,4 +4,5 @@ public interface IAuthService
 {
     public Task Authenticate();
     public Task Logout();
+    public Task<bool> IsLoggedIn();
 }

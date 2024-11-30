@@ -37,9 +37,19 @@ public class CommandService(IServiceProvider serviceProvider, ILoggerService log
             logger.LogFatal($"Invalid command '{args[0]}'. Valid commands are: {string.Join(", ", commands.Select(x => x.GetName()).ToArray())}");
             return ExitCodes.Failure;
         }
+
+        try
+        {
+            int exitCode = await commandMatch.Execute(args);
+            return exitCode;
+        }
+        catch (Exception e)
+        {
+            logger.LogFatal($"Command failed: {e.Message}");
+            logger.LogDebug($"Command stack-trace: {e.StackTrace}");
+        }
         
-        int exitCode = await commandMatch.Execute(args);
-        return exitCode;
+        return ExitCodes.Failure;
     }
     
 }

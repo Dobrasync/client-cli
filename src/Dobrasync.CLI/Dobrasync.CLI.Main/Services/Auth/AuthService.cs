@@ -53,6 +53,19 @@ public class AuthService(ISystemSettingService settings, IApiClient apiClient, I
         logger.LogInfo("Success.");
     }
 
+    public async Task<bool> IsLoggedIn()
+    {
+        try
+        {
+            SessionInfoDto sessionInfo = await apiClient.GetSessionInfoAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
+
     private async Task BeginDeviceAuth()
     {
         var authorityDto = await apiClient.GetIdpAuthorityAsync();

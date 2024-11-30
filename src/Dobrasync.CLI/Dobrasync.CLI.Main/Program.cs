@@ -1,4 +1,5 @@
-﻿using Lamashare.CLI.ApiGen.Mainline;
+﻿using Dobrasync.CLI.Util;
+using Lamashare.CLI.ApiGen.Mainline;
 using Lamashare.CLI.Const;
 using Lamashare.CLI.Db.Entities;
 using Lamashare.CLI.Db.Enums;
@@ -125,5 +126,6 @@ using(var scope = servicesProvider.CreateScope())
 #endregion
 
 var commandService = servicesProvider.GetRequiredService<ICommandService>();
+
 int exitCode = await commandService.Consume(args);
 return exitCode;

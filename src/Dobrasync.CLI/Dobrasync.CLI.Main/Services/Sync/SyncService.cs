@@ -20,18 +20,6 @@ namespace Lamashare.CLI.Services.Sync;
 
 public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerService logger, ISystemSettingService settings, IBlockService blockService) : ISyncService
 {
-    #region Login
-    public Task<int> Login()
-    {
-        throw new NotImplementedException();
-    }
-    #endregion
-    #region Logout
-    public Task<int> Logout()
-    {
-        throw new NotImplementedException();
-    }
-    #endregion
     #region Create
     public async Task<int> CreateLibrary(string name)
     {

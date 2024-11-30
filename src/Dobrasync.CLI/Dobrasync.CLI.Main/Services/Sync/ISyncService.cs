@@ -4,10 +4,6 @@ namespace Lamashare.CLI.Services.Sync;
 
 public interface ISyncService
 {
-    public Task<int> Login();
-
-    public Task<int> Logout();
-
     /// <summary>
     /// Create a new library on remote.
     /// </summary>
