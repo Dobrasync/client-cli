@@ -63,6 +63,7 @@ public class AuthService(ISystemSettingService settings, IApiClient apiClient, I
         }
         catch (Exception e)
         {
+            await LogoutAsync();
             return false;
         }
     }

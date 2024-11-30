@@ -278,6 +278,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         await authService.RequireLoggedInAsync();
         
         #region load file
+        logger.LogInfo($"Pulling file '{fileLocalPath}'...");
         LibraryEntity lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
         string file = fileLocalPath;
         #endregion
@@ -297,10 +298,13 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         #endregion
         #region Pull blocks required by local
         // TODO: Build diff, for testing we just full everything for now
+        int index = 0;
         foreach (var block in remoteFileBlocklist)
         {
+            logger.LogInfo($"Pulling block {index+1} of {remoteFileBlocklist.Count}...");
             BlockDto pulled = await apiClient.PullBlockAsync(block);
             await blockService.WriteTempBlock(pulled.Checksum, pulled.Content);
+            index++;
         }
         #endregion
         #region Transaction - FINISH
@@ -325,6 +329,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         await authService.RequireLoggedInAsync();
         
         #region load
+        logger.LogInfo($"Pushing file '{fileLocalPath}'...");
         var lib = await repoWrap.LibraryRepo.GetByIdAsyncThrows(localLibId);
         string file = fileLocalPath;
         #endregion
@@ -350,8 +355,10 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
         logger.LogDebug($"Began transaction with result: {JsonSerializer.Serialize(transaction)}");
         #endregion
         #region Push required blocks
+        long index = 0;
         foreach (var remoteBlock in transaction.RequiredBlocks)
         {
+            logger.LogInfo($"Pushing block {index+1} of {transaction.RequiredBlocks.Count}.");
             var block = localFileBlocklist.FirstOrDefault(x => x.Checksum == remoteBlock);
             if (block == null)
             {
@@ -368,6 +375,7 @@ public class SyncService(IApiClient apiClient, IRepoWrapper repoWrap, ILoggerSer
                 Size = block.Payload.Length,
             });
             logger.LogDebug($"Pushed block '{block.Checksum}'.");
+            index++;
         }
         #endregion
         #region finalize transaction
